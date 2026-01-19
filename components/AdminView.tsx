@@ -58,7 +58,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig })
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<'general' | 'addresses'>('general');
 

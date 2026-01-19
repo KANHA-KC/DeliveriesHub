@@ -1,10 +1,10 @@
 
 import React from 'react';
-import { 
-  Package, 
-  Truck, 
-  CheckCircle2, 
-  Boxes, 
+import {
+  Package,
+  Truck,
+  CheckCircle2,
+  Boxes,
   FileText,
   Mail,
   MessageSquare,
@@ -19,8 +19,8 @@ export const COLORS = {
   sidebar: '#001a1d',  // Even darker teal for sidebar
   accent: '#0097a7',  // Alphalake Medium Teal
   light: '#d9f2f2',   // Alphalake Light Teal
-  success: '#10b981', 
-  danger: '#ef4444', 
+  success: '#10b981',
+  danger: '#ef4444',
 };
 
 export const STATUS_METADATA: Record<OrderStatus, { label: string; icon: React.ReactNode; color: string }> = {
@@ -49,18 +49,18 @@ export const COMM_LABELS: Record<CommMethod, { label: string; icon: React.ReactN
 
 // Updated Local Asset Paths
 export const ALPHALAKE_LOGO_URL = '/assets/Copy of typeface white.png';
-export const CARA_LOGO_URL = './assets/cara-logo-white.png';
+export const CARA_LOGO_URL = '/assets/cara-logo-white.png';
 
 export const AlphalakeLogo: React.FC<{ light?: boolean, size?: 'sm' | 'md' | 'lg', collapsed?: boolean }> = ({ light, size = 'md', collapsed }) => {
   const hSize = size === 'lg' ? 'h-6' : size === 'lg' ? 'h-10' : 'h-8';
-  
+
   if (collapsed) {
     return (
       <div className={`flex items-center justify-center`}>
-        <img 
-          src={ALPHALAKE_LOGO_URL} 
-          alt="A" 
-          className="w-10 h-10 object-contain" 
+        <img
+          src={ALPHALAKE_LOGO_URL}
+          alt="A"
+          className="w-10 h-10 object-contain"
           style={{ filter: light ? 'none' : 'brightness(0)' }}
         />
       </div>
@@ -69,10 +69,10 @@ export const AlphalakeLogo: React.FC<{ light?: boolean, size?: 'sm' | 'md' | 'lg
 
   return (
     <div className="flex items-center">
-      <img 
-        src={ALPHALAKE_LOGO_URL} 
-        alt="Alphalake Ai" 
-        className={`${hSize} object-contain`} 
+      <img
+        src={ALPHALAKE_LOGO_URL}
+        alt="Alphalake Ai"
+        className={`${hSize} object-contain`}
         style={{ filter: light ? 'none' : 'brightness(0)' }}
       />
     </div>
