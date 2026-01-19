@@ -1,0 +1,7 @@
+{
+  "name": "Alpha Lake POD App",
+  "description": "A white-labeled, modular delivery and proof-of-delivery application with tailored experiences for drivers, recipients, and admins.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
