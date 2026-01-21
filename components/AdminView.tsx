@@ -20,7 +20,8 @@ import {
   Menu,
   MoreVertical,
   ChevronDown,
-  Lock
+  Lock,
+  User
 } from 'lucide-react';
 import { POD_LABELS, COMM_LABELS, AlphalakeLogo, ALPHALAKE_LOGO_URL, CARA_LOGO_URL } from '../constants';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
@@ -30,6 +31,7 @@ import { AddressManagementView } from './AddressManagementView';
 interface AdminViewProps {
   configs: CustomerConfig[];
   onUpdateConfig: (config: CustomerConfig) => void;
+  onSwitchToCustomerView?: () => void;
 }
 
 const STAT_DATA = [
@@ -54,7 +56,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig }) => {
+export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, onSwitchToCustomerView }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
@@ -418,11 +420,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig })
               </button>
 
               {isProfileMenuOpen && (
-                <div className="absolute top-full right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 z-50">
+                <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 z-50">
                   <div className="px-4 py-3 border-b border-slate-50 mb-2">
                     <p className="text-sm font-black text-slate-800">Sarah Connor</p>
-                    <p className="text-xs text-slate-400 font-bold uppercase tracking-wider">Office User</p>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">sarah.connor@alphalake.ai</p>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Office User</p>
                   </div>
+
                   <button
                     onClick={() => { setActiveTab('profile'); setIsProfileMenuOpen(false); }}
                     className="w-full text-left px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-[#005961] flex items-center gap-3 transition-colors"
@@ -441,6 +445,25 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig })
                   >
                     <Bell size={16} /> Notification Settings
                   </button>
+
+                  {/* Switch to Customer View - only if customer has portal access */}
+                  {configs.some(c => c.hasCustomerPortal) && (
+                    <>
+                      <div className="h-px bg-slate-100 my-1" />
+                      <button
+                        onClick={() => {
+                          if (onSwitchToCustomerView) {
+                            onSwitchToCustomerView();
+                          }
+                          setIsProfileMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-3 text-sm font-bold text-[#005961] hover:bg-[#d9f2f2] flex items-center gap-3 transition-colors"
+                      >
+                        <User size={16} /> Switch to Customer View
+                      </button>
+                    </>
+                  )}
+
                   <div className="h-px bg-slate-100 my-1" />
                   <button className="w-full text-left px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-3 transition-colors">
                     <LogOut size={16} /> Log Out

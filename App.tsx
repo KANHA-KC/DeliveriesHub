@@ -5,7 +5,7 @@ import { RoleSelector } from './components/RoleSelector';
 import { DriverView } from './components/DriverView';
 import { RecipientView } from './components/RecipientView';
 import { AdminView } from './components/AdminView';
-import { LaptopFrame, MobileFrame } from './components/DeviceFrames';
+import { MobileFrame } from './components/DeviceFrames';
 
 const INITIAL_ORDERS: Order[] = [
   {
@@ -64,6 +64,7 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
     name: 'Sunnyside Nursing Home',
     requiredPOD: [PODMethod.SIGNATURE, PODMethod.PHOTO],
     commMethods: [CommMethod.EMAIL],
+    hasCustomerPortal: true, // Customer has paid for portal access
     addresses: [
       {
         id: 'A-001',
@@ -130,29 +131,31 @@ const App: React.FC = () => {
 
   const configMap = configs.reduce((acc, c) => ({ ...acc, [c.id]: c }), {} as Record<string, CustomerConfig>);
 
-  // Admin in Laptop Frame
+  // Admin view - no frame
   if (currentRole === UserRole.ADMIN) {
     return (
-      <div className="relative">
-        <LaptopFrame>
-          <div className="h-full w-full overflow-hidden flex flex-col bg-slate-50">
-            <AdminView configs={configs} onUpdateConfig={handleUpdateConfig} />
-          </div>
-        </LaptopFrame>
-        <div className="fixed bottom-8 right-32 z-[100] shadow-2xl rounded-full scale-75 origin-bottom-right">
+      <div className="relative h-screen w-screen overflow-hidden">
+        <div className="h-full w-full overflow-hidden flex flex-col bg-slate-50">
+          <AdminView
+            configs={configs}
+            onUpdateConfig={handleUpdateConfig}
+            onSwitchToCustomerView={() => setCurrentRole(UserRole.RECIPIENT)}
+          />
+        </div>
+        <div className="fixed bottom-8 right-8 z-[100] shadow-2xl rounded-full">
           <RoleSelector currentRole={currentRole} onRoleChange={setCurrentRole} />
         </div>
       </div>
     );
   }
 
-  // Driver and Recipient in Mobile Frame
+  // Driver and Recipient views - with mobile frame
   return (
     <div className="relative">
       <MobileFrame>
         <div className="h-full w-full bg-white flex flex-col">
-          {/* Simple Status Bar for Mobile Content */}
-          <div className="h-[44px] bg-white w-full shrink-0" /> {/* Spacer for notch */}
+          {/* Spacer for notch */}
+          <div className="h-[44px] bg-white w-full shrink-0" />
 
           <div className="flex-1 overflow-hidden relative">
             {currentRole === UserRole.DRIVER ? (

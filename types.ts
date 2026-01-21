@@ -37,6 +37,7 @@ export interface CustomerConfig {
   logoUrl?: string;
   addresses: Address[];
   addressHistory: AddressHistory[];
+  hasCustomerPortal?: boolean; // Whether customer has paid for Customer Portal access
 }
 
 export interface Address {
