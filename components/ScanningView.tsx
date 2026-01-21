@@ -365,7 +365,7 @@ export const ScanningView: React.FC<ScanningViewProps> = ({
                                 <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 relative animate-in slide-in-from-top-2 shadow-lg">
                                     <AlertTriangle size={16} className="text-red-500 shrink-0 mt-0.5" />
                                     <p className="text-xs font-bold text-red-600 pr-6 leading-relaxed">
-                                        No GPS found, geo assistance features disabled carefully check addresses.
+                                        No GPS found, geo assistance features disabled. Carefully check addresses.
                                     </p>
                                     <button className="absolute top-2 right-2 text-red-400 hover:text-red-600"><X size={14} /></button>
                                 </div>
