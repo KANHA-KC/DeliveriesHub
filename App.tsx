@@ -4,8 +4,9 @@ import { UserRole, Order, OrderStatus, CustomerConfig, PODMethod, CommMethod } f
 import { RoleSelector } from './components/RoleSelector';
 import { DriverView } from './components/DriverView';
 import { RecipientView } from './components/RecipientView';
+import { RecipientViewDesktop } from './components/RecipientViewDesktop';
 import { AdminView } from './components/AdminView';
-import { MobileFrame } from './components/DeviceFrames';
+import { MobileFrame, LaptopFrame } from './components/DeviceFrames';
 
 const INITIAL_ORDERS: Order[] = [
   {
@@ -111,6 +112,7 @@ const App: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole>(UserRole.ADMIN);
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [configs, setConfigs] = useState<CustomerConfig[]>(INITIAL_CONFIGS);
+  const [isDesktopCustomerView, setIsDesktopCustomerView] = useState(false);
 
   const handleCompleteDelivery = (orderId: string) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: OrderStatus.DELIVERED } : o));
@@ -132,14 +134,14 @@ const App: React.FC = () => {
   const configMap = configs.reduce((acc, c) => ({ ...acc, [c.id]: c }), {} as Record<string, CustomerConfig>);
 
   // Admin view - no frame
-  if (currentRole === UserRole.ADMIN) {
+  if (currentRole === UserRole.ADMIN && !isDesktopCustomerView) {
     return (
       <div className="relative h-screen w-screen overflow-hidden">
         <div className="h-full w-full overflow-hidden flex flex-col bg-slate-50">
           <AdminView
             configs={configs}
             onUpdateConfig={handleUpdateConfig}
-            onSwitchToCustomerView={() => setCurrentRole(UserRole.RECIPIENT)}
+            onSwitchToCustomerView={() => setIsDesktopCustomerView(true)}
           />
         </div>
         <div className="fixed bottom-8 right-8 z-[100] shadow-2xl rounded-full">
@@ -149,7 +151,54 @@ const App: React.FC = () => {
     );
   }
 
-  // Driver and Recipient views - with mobile frame
+  // Desktop Customer View - triggered from Admin panel
+  if (isDesktopCustomerView) {
+    return (
+      <div className="relative h-screen w-screen overflow-hidden">
+        <RecipientViewDesktop
+          orders={orders}
+          customerConfig={configs[0]}
+          onUpdateConfig={handleUpdateConfig}
+        />
+        <div className="fixed bottom-8 right-8 z-[100] shadow-2xl rounded-full">
+          <button
+            onClick={() => setIsDesktopCustomerView(false)}
+            className="bg-white text-[#005961] px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+          >
+            ← Back to Admin
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Driver view - with mobile frame only
+  if (currentRole === UserRole.DRIVER) {
+    return (
+      <div className="relative">
+        <MobileFrame>
+          <div className="h-full w-full bg-white flex flex-col">
+            {/* Spacer for notch */}
+            <div className="h-[44px] bg-white w-full shrink-0" />
+
+            <div className="flex-1 overflow-hidden relative">
+              <DriverView
+                orders={orders}
+                onCompleteDelivery={handleCompleteDelivery}
+                onUpdateParcel={handleUpdateParcel}
+                customerConfigs={configMap}
+              />
+            </div>
+          </div>
+        </MobileFrame>
+        <div className="fixed bottom-8 right-32 z-[100] shadow-2xl rounded-full scale-75 origin-bottom-right">
+          <RoleSelector currentRole={currentRole} onRoleChange={setCurrentRole} />
+        </div>
+      </div>
+    );
+  }
+
+  // Recipient view - mobile version only (from role selector)
   return (
     <div className="relative">
       <MobileFrame>
@@ -158,20 +207,11 @@ const App: React.FC = () => {
           <div className="h-[44px] bg-white w-full shrink-0" />
 
           <div className="flex-1 overflow-hidden relative">
-            {currentRole === UserRole.DRIVER ? (
-              <DriverView
-                orders={orders}
-                onCompleteDelivery={handleCompleteDelivery}
-                onUpdateParcel={handleUpdateParcel}
-                customerConfigs={configMap}
-              />
-            ) : (
-              <RecipientView
-                orders={orders}
-                customerConfig={configs[0]}
-                onUpdateConfig={handleUpdateConfig}
-              />
-            )}
+            <RecipientView
+              orders={orders}
+              customerConfig={configs[0]}
+              onUpdateConfig={handleUpdateConfig}
+            />
           </div>
         </div>
       </MobileFrame>
