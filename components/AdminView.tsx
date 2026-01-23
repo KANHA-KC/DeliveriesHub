@@ -29,6 +29,8 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 import { motion, useDragControls } from 'framer-motion';
 import { UserManagementView } from './UserManagementView';
 import { AddressManagementView } from './AddressManagementView';
+import { LogoWithHoverMenu } from './LogoWithHoverMenu';
+import { HubSelectionModal } from './HubSelectionModal';
 
 interface AdminViewProps {
   configs: CustomerConfig[];
@@ -62,6 +64,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
   const dragControls = useDragControls();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
+  const [isHubSelectorOpen, setIsHubSelectorOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -375,29 +378,29 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
 
   return (
     <div className="flex flex-col h-screen bg-slate-50 overflow-hidden">
-      <header className="h-16 bg-[#005961] px-6 flex items-center justify-between sticky top-0 z-50 shadow-sm shrink-0 w-full">
+      <header className="h-16 bg-[#003B46] px-4 flex items-center justify-between sticky top-0 z-50 shadow-lg shrink-0 w-full text-white">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+            className="p-2 text-white hover:text-white hover:bg-[#0E7490] rounded-lg transition-all"
           >
             <Menu size={24} />
           </button>
 
-          <div className="flex items-center gap-6 ml-2">
-            <div className="h-8">
-              <img src={ALPHALAKE_LOGO_URL} alt="Alphalake Ai" className="h-full object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
+          <div className="flex items-center gap-1 ml-0">
+            <div className="h-8 flex items-center">
+              <img src={ALPHALAKE_LOGO_URL} alt="Alphalake Ai" className="h-full object-contain" />
             </div>
-            <div className="h-10 w-[1px] bg-white/20" />
+            <div className="h-8 w-[1px] bg-gray-500 mx-2" />
             <div className="flex flex-col justify-center">
-              <h1 className="text-xl font-bold text-white tracking-tight leading-none">Pharmacy Cloud</h1>
-              <p className="text-white/50 text-xs font-medium tracking-wide">Deliveries Hub</p>
+              <span className="font-semibold text-md leading-tight text-white">Pharmacy Cloud</span>
+              <span className="text-sm text-gray-300 font-normal">Deliveries Hub</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <div className="relative">
               <button className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white border border-white/20 hover:bg-white/20 transition-all">
                 <Bell size={20} />
@@ -476,12 +479,18 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
 
             <div className="h-8 w-[2px] bg-white/20" />
 
-            <div className="h-10">
-              <img src="/assets/cara-logo-white.png" alt="Cara" className="h-full object-contain" />
+            <div className="h-10 flex items-center">
+              <LogoWithHoverMenu
+                onOpenHub={() => setIsHubSelectorOpen(true)}
+                logoSrc="/assets/cara-logo-white.png"
+                isRightAligned={true}
+              />
             </div>
           </div>
         </div>
       </header>
+
+      <HubSelectionModal isOpen={isHubSelectorOpen} onClose={() => setIsHubSelectorOpen(false)} />
 
       {/* Customer Selection Modal */}
       {isCustomerSelectOpen && (
