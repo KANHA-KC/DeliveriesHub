@@ -21,17 +21,19 @@ import {
   MoreVertical,
   ChevronDown,
   Lock,
-  User
+  User,
+  X
 } from 'lucide-react';
 import { POD_LABELS, COMM_LABELS, AlphalakeLogo, ALPHALAKE_LOGO_URL, CARA_LOGO_URL } from '../constants';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { motion, useDragControls } from 'framer-motion';
 import { UserManagementView } from './UserManagementView';
 import { AddressManagementView } from './AddressManagementView';
 
 interface AdminViewProps {
   configs: CustomerConfig[];
   onUpdateConfig: (config: CustomerConfig) => void;
-  onSwitchToCustomerView?: () => void;
+  onSwitchToCustomerView?: (customerName?: string) => void;
 }
 
 const STAT_DATA = [
@@ -57,7 +59,9 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, onSwitchToCustomerView }) => {
+  const dragControls = useDragControls();
   const [searchTerm, setSearchTerm] = useState('');
+  const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -452,10 +456,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
                       <div className="h-px bg-slate-100 my-1" />
                       <button
                         onClick={() => {
-                          if (onSwitchToCustomerView) {
-                            onSwitchToCustomerView();
-                          }
                           setIsProfileMenuOpen(false);
+                          setIsCustomerSelectOpen(true);
                         }}
                         className="w-full text-left px-4 py-3 text-sm font-bold text-[#005961] hover:bg-[#d9f2f2] flex items-center gap-3 transition-colors"
                       >
@@ -480,6 +482,66 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
           </div>
         </div>
       </header>
+
+      {/* Customer Selection Modal */}
+      {isCustomerSelectOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#001a1d]/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <motion.div
+            drag
+            dragListener={false}
+            dragControls={dragControls}
+            dragMomentum={false}
+            className="bg-white rounded-[2rem] p-6 w-full max-w-md shadow-2xl border border-slate-100 flex flex-col max-h-[80vh] mx-4 animate-in zoom-in-95 duration-200"
+          >
+            <div
+              className="flex items-center justify-between mb-4 cursor-move"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
+              <div>
+                <h3 className="text-xl font-black text-[#005961] tracking-tight">Select Account</h3>
+                <p className="text-sm font-medium text-slate-400">Choose a customer view to access</p>
+              </div>
+              <button
+                onClick={() => setIsCustomerSelectOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 flex items-center justify-center transition-all cursor-pointer"
+                onPointerDown={(e) => e.stopPropagation()} // Prevent drag when clicking close
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="overflow-y-scroll pr-2 -mr-2 space-y-2 custom-scrollbar max-h-[180px]">
+              {['Clearbrook', 'Maynooth Lodge', 'Nazareth', 'The Residence Carlton'].map((customer, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setIsCustomerSelectOpen(false);
+                    if (onSwitchToCustomerView) {
+                      onSwitchToCustomerView(customer);
+                    }
+                  }}
+                  className="w-full text-left px-4 py-2 rounded-2xl bg-slate-50 hover:bg-[#d9f2f2] border border-slate-100 hover:border-[#b8e4e4] transition-all group group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-white text-slate-300 group-hover:text-[#005961] flex items-center justify-center border border-slate-100 shadow-sm transition-colors">
+                        <Building2 size={16} />
+                      </div>
+                      <span className="font-bold text-slate-600 group-hover:text-[#005961] text-sm">{customer}</span>
+                    </div>
+                    <ChevronRight size={16} className="text-slate-300 group-hover:text-[#0097a7] transition-colors" />
+                  </div>
+                </button>
+              ))}
+
+              {/* Dummy items to demonstrate scrolling if list grows */}
+              {/* <div className="p-4 text-center text-xs font-bold text-slate-300 uppercase tracking-widest mt-4">
+                50+ More Customers...
+              </div> */}
+            </div>
+          </motion.div>
+        </div>
+      )}
 
       <div className="flex flex-1 overflow-hidden">
         <aside
@@ -536,6 +598,6 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
           </main>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
