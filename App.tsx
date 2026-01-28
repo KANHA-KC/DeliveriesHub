@@ -140,6 +140,7 @@ const App: React.FC = () => {
         <div className="h-full w-full overflow-hidden flex flex-col bg-slate-50">
           <AdminView
             configs={configs}
+            orders={orders}
             onUpdateConfig={handleUpdateConfig}
             onSwitchToCustomerView={() => setIsDesktopCustomerView(true)}
           />

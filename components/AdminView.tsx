@@ -31,9 +31,13 @@ import { UserManagementView } from './UserManagementView';
 import { AddressManagementView } from './AddressManagementView';
 import { LogoWithHoverMenu } from './LogoWithHoverMenu';
 import { HubSelectionModal } from './HubSelectionModal';
+import { OfficeDeliveriesView } from './OfficeDeliveriesView';
+
+import { Order } from '../types';
 
 interface AdminViewProps {
   configs: CustomerConfig[];
+  orders: Order[];
   onUpdateConfig: (config: CustomerConfig) => void;
   onSwitchToCustomerView?: (customerName?: string) => void;
 }
@@ -60,7 +64,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, onSwitchToCustomerView }) => {
+export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateConfig, onSwitchToCustomerView }) => {
   const dragControls = useDragControls();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
@@ -569,7 +573,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
             >
               <Users size={20} className="shrink-0" /> {!isSidebarCollapsed && <span>Customers</span>}
             </button>
-            <button className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-black text-slate-500 hover:text-white hover:bg-[#002f33] transition-all">
+            <button
+              onClick={() => { setActiveTab('deliveries'); setEditingCustomerId(null); }}
+              className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-black transition-all ${activeTab === 'deliveries' ? 'bg-[#005961] text-white shadow-xl shadow-[#005961]/20' : 'text-slate-500 hover:text-white hover:bg-[#002f33]'}`}
+            >
               <ClipboardList size={20} className="shrink-0" /> {!isSidebarCollapsed && <span>Deliveries</span>}
             </button>
             <button className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-black text-slate-500 hover:text-white hover:bg-[#002f33] transition-all">
@@ -596,9 +603,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, onUpdateConfig, o
             </div>
           </div>
 
-          <main className="flex-1 p-10 overflow-y-auto">
+          <main className={`flex-1 flex flex-col ${activeTab === 'deliveries' ? 'overflow-hidden' : 'p-10 overflow-y-auto'}`}>
             {activeTab === 'users' ? (
               <UserManagementView />
+            ) : activeTab === 'deliveries' ? (
+              <OfficeDeliveriesView orders={orders} configs={configs} />
             ) : editingCustomerId && activeCustomer ? (
               renderSettings(activeCustomer)
             ) : (
