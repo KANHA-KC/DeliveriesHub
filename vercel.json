@@ -1,0 +1,8 @@
+{
+    "rewrites": [
+        {
+            "source": "/pharmacy/deliveries-hub/(.*)",
+            "destination": "/$1"
+        }
+    ]
+}
