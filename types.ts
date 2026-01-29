@@ -38,6 +38,7 @@ export interface CustomerConfig {
   addresses: Address[];
   addressHistory: AddressHistory[];
   hasCustomerPortal?: boolean; // Whether customer has paid for Customer Portal access
+  connectedSystems?: string[];
 }
 
 export interface Address {
@@ -49,6 +50,9 @@ export interface Address {
   eireCode: string; // Specific requirement
   country: string;
   isDefault?: boolean;
+  contactName?: string;
+  phones?: string[];
+  emails?: string[];
 }
 
 export interface AddressHistory {

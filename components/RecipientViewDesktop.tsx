@@ -146,7 +146,7 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                 <div className="flex items-center gap-3">
                     <div className="h-12">
                         <img
-                            src="/assets/cara-logo.png"
+                            src="assets/cara-logo.png"
                             alt="Cara"
                             className="h-12 object-contain"
                         />
@@ -160,75 +160,83 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
 
             <div className="flex flex-1 overflow-hidden">
                 {/* Sidebar Navigation */}
-                <div className={`bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-72'}`}>
+                <div className={`bg-white border-r border-slate-200 flex flex-col transition-all duration-300 overflow-hidden ${isCollapsed ? 'w-20' : 'w-72'}`}>
                     {/* Navigation Menu */}
-                    <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <nav className="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden">
                         <button
                             onClick={() => setView('HOME')}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-all ${view === 'HOME' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HOME' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                             title="My Orders"
                         >
-                            <Home size={20} />
-                            {!isCollapsed && <span className="font-bold text-sm">My Orders</span>}
+                            <Home size={24} className="shrink-0 transition-all duration-300" />
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-[200px] opacity-100 ml-3'}`}>
+                                <span className="font-bold text-sm whitespace-nowrap block">My Orders</span>
+                            </div>
                         </button>
 
                         <button
                             onClick={() => setView('NOTIFICATIONS')}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-all relative ${view === 'NOTIFICATIONS' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out relative ${view === 'NOTIFICATIONS' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                             title="Notifications"
                         >
-                            <Bell size={20} />
-                            {!isCollapsed && <span className="font-bold text-sm">Notifications</span>}
-                            <span className={`absolute ${isCollapsed ? 'top-1 right-1' : 'top-2 right-3'} w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full`}></span>
+                            <Bell size={24} className="shrink-0 transition-all duration-300" />
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-[200px] opacity-100 ml-3'}`}>
+                                <span className="font-bold text-sm whitespace-nowrap block">Notifications</span>
+                            </div>
+                            <span className={`absolute transition-all duration-300 ${isCollapsed ? 'top-1 right-2' : 'top-2 right-3'} w-2.5 h-2.5 bg-rose-500 border-2 border-white rounded-full`}></span>
                         </button>
 
                         <button
                             onClick={() => setView('ADDRESSES')}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-all ${view === 'ADDRESSES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'ADDRESSES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                             title="My Addresses"
                         >
-                            <MapPin size={20} />
-                            {!isCollapsed && <span className="font-bold text-sm">My Addresses</span>}
+                            <MapPin size={24} className="shrink-0 transition-all duration-300" />
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-[200px] opacity-100 ml-3'}`}>
+                                <span className="font-bold text-sm whitespace-nowrap block">My Addresses</span>
+                            </div>
                         </button>
 
                         <button
                             onClick={() => setView('PREFERENCES')}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-all ${view === 'PREFERENCES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'PREFERENCES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                             title="Preferences"
                         >
-                            <Settings size={20} />
-                            {!isCollapsed && <span className="font-bold text-sm">Preferences</span>}
+                            <Settings size={24} className="shrink-0 transition-all duration-300" />
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-[200px] opacity-100 ml-3'}`}>
+                                <span className="font-bold text-sm whitespace-nowrap block">Preferences</span>
+                            </div>
                         </button>
 
                         <button
                             onClick={() => setView('HISTORY')}
-                            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-xl transition-all ${view === 'HISTORY' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HISTORY' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
                                 }`}
                             title="History"
                         >
-                            <History size={20} />
-                            {!isCollapsed && <span className="font-bold text-sm">History</span>}
+                            <History size={24} className="shrink-0 transition-all duration-300" />
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isCollapsed ? 'max-w-0 opacity-0 ml-0' : 'max-w-[200px] opacity-100 ml-3'}`}>
+                                <span className="font-bold text-sm whitespace-nowrap block">History</span>
+                            </div>
                         </button>
                     </nav>
 
                     {/* Footer CTA */}
-                    {!isCollapsed && (
-                        <div className="p-4 border-t border-slate-100">
-                            <div className="bg-[#005961] rounded-2xl p-5 text-white">
-                                <h4 className="font-bold mb-2 text-sm">Need Help?</h4>
-                                <p className="text-xs text-cyan-100 opacity-90 leading-relaxed mb-3">
-                                    Contact our pharmacy team for assistance with your orders.
-                                </p>
-                                <button className="w-full bg-white text-[#005961] px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all">
-                                    Contact Support <ExternalLink size={14} />
-                                </button>
-                            </div>
+                    <div className={`border-t border-slate-100 transition-all duration-300 overflow-hidden ${isCollapsed ? 'h-0 p-0 opacity-0' : 'h-auto p-4 opacity-100'}`}>
+                        <div className="bg-[#005961] rounded-2xl p-5 text-white">
+                            <h4 className="font-bold mb-2 text-sm">Need Help?</h4>
+                            <p className="text-xs text-cyan-100 opacity-90 leading-relaxed mb-3">
+                                Contact our pharmacy team for assistance with your orders.
+                            </p>
+                            <button className="w-full bg-white text-[#005961] px-4 py-2.5 rounded-xl text-xs font-bold shadow-lg flex items-center justify-center gap-2 hover:shadow-xl transition-all">
+                                Contact Support <ExternalLink size={14} />
+                            </button>
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 {/* Main Content Area */}

@@ -144,7 +144,7 @@ export const RecipientView: React.FC<RecipientViewProps> = ({ orders, customerCo
                 <div className="flex items-center gap-4">
                   <div className="h-10">
                     <img
-                      src="/assets/cara-logo.png"
+                      src="assets/cara-logo.png"
                       alt="Cara"
                       className="h-10 object-contain"
                     />
@@ -478,7 +478,7 @@ export const RecipientView: React.FC<RecipientViewProps> = ({ orders, customerCo
                   {customerConfig.addressHistory.map((history) => (
                     <div key={history.id} className="relative pl-8 pb-6 border-l-2 border-slate-200 last:border-0 last:pb-0">
                       <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${history.action === 'CREATED' ? 'bg-[#0097a7]' :
-                          history.action === 'DELETED' ? 'bg-rose-500' : 'bg-amber-500'
+                        history.action === 'DELETED' ? 'bg-rose-500' : 'bg-amber-500'
                         }`} />
 
                       <div className="flex flex-col gap-2">

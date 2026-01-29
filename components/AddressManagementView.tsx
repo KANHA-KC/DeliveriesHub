@@ -14,6 +14,7 @@ import {
     ArrowRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MasterDataComparisonModal, MasterDataViewMode } from './MasterDataComparisonModal';
 
 interface AddressManagementViewProps {
     customer: CustomerConfig;
@@ -30,6 +31,40 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
     const [showHistory, setShowHistory] = useState(true);
     const [tempAddress, setTempAddress] = useState<Partial<Address>>({});
 
+    // Master Data State
+    const [mdModalOpen, setMdModalOpen] = useState(false);
+    const [mdViewMode, setMdViewMode] = useState<MasterDataViewMode>('ALL');
+    const [mdAddress, setMdAddress] = useState<Address | null>(null);
+
+    const openMasterData = (address: Address, mode: MasterDataViewMode) => {
+        setMdAddress(address);
+        setMdViewMode(mode);
+        setMdModalOpen(true);
+    };
+
+    const handleMasterDataSave = (updatedAddress: Address) => {
+        const newAddresses = customer.addresses.map(a => a.id === updatedAddress.id ? updatedAddress : a);
+
+        // Update History
+        const historyEntry: AddressHistory = {
+            id: `H-${Date.now()}`,
+            addressId: updatedAddress.id,
+            changedBy: currentUser,
+            changedAt: new Date().toISOString(),
+            action: 'UPDATED',
+            details: `Updated Master Data details for ${updatedAddress.label}`
+        };
+
+        onUpdate({
+            ...customer,
+            addresses: newAddresses,
+            addressHistory: [historyEntry, ...customer.addressHistory]
+        });
+
+        setMdModalOpen(false);
+        setMdAddress(null);
+    };
+
     const handleEdit = (address: Address) => {
         setEditingId(address.id);
         setTempAddress({ ...address });
@@ -45,7 +80,9 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
             city: '',
             eireCode: '',
             country: 'Ireland',
-            isDefault: false
+            isDefault: false,
+            phones: [],
+            emails: []
         });
         setEditingId(newId);
     };
@@ -180,6 +217,96 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                 </div>
             </div>
 
+            <div className="mt-4 border-t border-slate-100 pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase">Contact Name</label>
+                        <input
+                            className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0097a7] font-medium"
+                            value={tempAddress.contactName || ''}
+                            onChange={e => setTempAddress({ ...tempAddress, contactName: e.target.value })}
+                            placeholder="Primary Contact"
+                        />
+                    </div>
+                </div>
+
+                {/* Phones */}
+                <div className="mt-4 space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                        Phone Numbers
+                        <button
+                            onClick={() => setTempAddress({ ...tempAddress, phones: [...(tempAddress.phones || []), ''] })}
+                            className="text-[#005961] hover:text-[#0097a7] flex items-center gap-1"
+                        >
+                            <Plus size={12} /> Add
+                        </button>
+                    </label>
+                    {(tempAddress.phones?.length ? tempAddress.phones : ['']).map((phone, idx) => (
+                        <div key={idx} className="flex gap-2">
+                            <input
+                                className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0097a7] font-medium"
+                                value={phone}
+                                onChange={e => {
+                                    const newPhones = [...(tempAddress.phones || [''])];
+                                    newPhones[idx] = e.target.value;
+                                    setTempAddress({ ...tempAddress, phones: newPhones });
+                                }}
+                                placeholder="+353 ..."
+                            />
+                            {(tempAddress.phones?.length || 0) > 1 && (
+                                <button
+                                    onClick={() => {
+                                        const newPhones = tempAddress.phones?.filter((_, i) => i !== idx);
+                                        setTempAddress({ ...tempAddress, phones: newPhones });
+                                    }}
+                                    className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Emails */}
+                <div className="mt-4 space-y-2">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-between">
+                        Email Addresses
+                        <button
+                            onClick={() => setTempAddress({ ...tempAddress, emails: [...(tempAddress.emails || []), ''] })}
+                            className="text-[#005961] hover:text-[#0097a7] flex items-center gap-1"
+                        >
+                            <Plus size={12} /> Add
+                        </button>
+                    </label>
+                    {(tempAddress.emails?.length ? tempAddress.emails : ['']).map((email, idx) => (
+                        <div key={idx} className="flex gap-2">
+                            <input
+                                className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0097a7] font-medium"
+                                value={email}
+                                onChange={e => {
+                                    const newEmails = [...(tempAddress.emails || [''])];
+                                    newEmails[idx] = e.target.value;
+                                    setTempAddress({ ...tempAddress, emails: newEmails });
+                                }}
+                                placeholder="name@example.com"
+                            />
+                            {(tempAddress.emails?.length || 0) > 1 && (
+                                <button
+                                    onClick={() => {
+                                        const newEmails = tempAddress.emails?.filter((_, i) => i !== idx);
+                                        setTempAddress({ ...tempAddress, emails: newEmails });
+                                    }}
+                                    className="p-3 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-colors"
+                                >
+                                    <Trash2 size={18} />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             <div className="mt-6 flex justify-end gap-3">
                 <button
                     onClick={handleCancel}
@@ -202,8 +329,8 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
             <div className="flex-1 flex flex-col min-w-0">
                 <div className="flex justify-between items-center mb-6">
                     <div>
-                        <h2 className="text-xl lg:text-2xl font-black text-[#005961] tracking-tight">Delivery Addresses</h2>
-                        <p className="text-xs lg:text-sm text-slate-400 font-medium">Manage authorized drop-off locations</p>
+                        <h2 className="text-xl lg:text-2xl font-black text-[#005961] tracking-tight">Addresses & Contacts</h2>
+                        <p className="text-xs lg:text-sm text-slate-400 font-medium">Manage authorized drop-off locations and contacts</p>
                     </div>
                     <button
                         onClick={handleAdd}
@@ -244,6 +371,28 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                                 <span className="text-[#005961] font-bold">{address.eireCode}</span>
                                             </p>
                                         </div>
+                                    </div>
+
+                                    {/* Master Data Buttons */}
+                                    <div className="flex items-center gap-2 mt-4 ml-14">
+                                        <button
+                                            onClick={() => openMasterData(address, 'MCLERNONS')}
+                                            className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider hover:bg-indigo-100 transition-colors"
+                                        >
+                                            McLernons
+                                        </button>
+                                        <button
+                                            onClick={() => openMasterData(address, 'SAGE')}
+                                            className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-100 transition-colors"
+                                        >
+                                            Sage
+                                        </button>
+                                        <button
+                                            onClick={() => openMasterData(address, 'ALL')}
+                                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
+                                        >
+                                            All
+                                        </button>
                                     </div>
 
                                     {/* Action buttons - always visible on mobile, hover on desktop */}
@@ -308,6 +457,15 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                         )}
                     </div>
                 </div>
+            )}
+            {mdModalOpen && mdAddress && (
+                <MasterDataComparisonModal
+                    isOpen={mdModalOpen}
+                    onClose={() => setMdModalOpen(false)}
+                    currentAddress={mdAddress}
+                    viewMode={mdViewMode}
+                    onSave={handleMasterDataSave}
+                />
             )}
         </div>
     );

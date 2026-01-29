@@ -357,6 +357,48 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                 ))}
               </div>
             </div>
+
+            {/* Connected Systems */}
+            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 md:col-span-2">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
+                  <LayoutDashboard size={24} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Connected Systems</h3>
+                  <p className="text-xs font-medium text-slate-400">Choose which additional systems to show in Addresses & Contacts</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {['MCLERNONS', 'SAGE'].map((system) => {
+                  const isConnected = customer.connectedSystems?.includes(system);
+                  return (
+                    <button
+                      key={system}
+                      onClick={() => {
+                        const current = customer.connectedSystems || [];
+                        const newSystems = isConnected
+                          ? current.filter(s => s !== system)
+                          : [...current, system];
+                        onUpdateConfig({ ...customer, connectedSystems: newSystems });
+                      }}
+                      className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isConnected
+                        ? 'bg-indigo-50 border-indigo-200 text-indigo-800 shadow-sm'
+                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
+                        }`}
+                    >
+                      <span className="font-bold">{system === 'MCLERNONS' ? 'McLernons' : 'Sage'}</span>
+                      {isConnected ? (
+                        <div className="bg-indigo-600 text-white rounded-full p-1.5 shadow-md"><Check size={14} strokeWidth={4} /></div>
+                      ) : (
+                        <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <div className="flex justify-end">
@@ -486,7 +528,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <div className="h-10 flex items-center">
               <LogoWithHoverMenu
                 onOpenHub={() => setIsHubSelectorOpen(true)}
-                logoSrc="/assets/cara-logo-white.png"
+                logoSrc="assets/cara-logo-white.png"
                 isRightAligned={true}
               />
             </div>

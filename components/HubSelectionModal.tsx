@@ -25,7 +25,7 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                     <div className="z-10 relative space-y-8">
                         {/* Logo */}
                         <div className="h-12 w-auto">
-                            <img src="/assets/cara-logo-white.png" alt="Cara Allcare Pharmacy" className="h-full object-contain" />
+                            <img src="assets/cara-logo-white.png" alt="Cara Allcare Pharmacy" className="h-full object-contain" />
                         </div>
 
                         <div>

@@ -48,8 +48,8 @@ export const COMM_LABELS: Record<CommMethod, { label: string; icon: React.ReactN
 };
 
 // Updated Local Asset Paths
-export const ALPHALAKE_LOGO_URL = '/assets/Copy of typeface white.png';
-export const CARA_LOGO_URL = '/assets/cara-logo-white.png';
+export const ALPHALAKE_LOGO_URL = 'assets/Copy of typeface white.png';
+export const CARA_LOGO_URL = 'assets/cara-logo-white.png';
 
 export const AlphalakeLogo: React.FC<{ light?: boolean, size?: 'sm' | 'md' | 'lg', collapsed?: boolean }> = ({ light, size = 'md', collapsed }) => {
   const hSize = size === 'lg' ? 'h-6' : size === 'lg' ? 'h-10' : 'h-8';

@@ -66,6 +66,7 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
     requiredPOD: [PODMethod.SIGNATURE, PODMethod.PHOTO],
     commMethods: [CommMethod.EMAIL],
     hasCustomerPortal: true, // Customer has paid for portal access
+    connectedSystems: ['MCLERNONS', 'SAGE'],
     addresses: [
       {
         id: 'A-001',
@@ -74,7 +75,10 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
         city: 'London',
         eireCode: 'D04 K7X2',
         country: 'UK',
-        isDefault: true
+        isDefault: true,
+        contactName: 'Sarah Smith',
+        phones: ['+44 20 1234 5678'],
+        emails: ['sarah@sunnyside.com']
       }
     ],
     addressHistory: [
@@ -93,6 +97,7 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
     name: 'Meadow View Residencies',
     requiredPOD: [PODMethod.PHOTO],
     commMethods: [CommMethod.EMAIL, CommMethod.SMS],
+    connectedSystems: ['MCLERNONS'],
     addresses: [
       {
         id: 'A-002',
@@ -101,7 +106,9 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
         city: 'Watford',
         eireCode: 'W91 X2R3',
         country: 'UK',
-        isDefault: true
+        isDefault: true,
+        phones: [],
+        emails: []
       }
     ],
     addressHistory: []
