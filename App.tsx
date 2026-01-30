@@ -72,12 +72,12 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
         id: 'A-001',
         label: 'Main Entrance',
         line1: '123 Care Lane',
-        city: 'London',
+        city: 'Dublin',
         eireCode: 'D04 K7X2',
-        country: 'UK',
+        country: 'Ireland',
         isDefault: true,
         contactName: 'Sarah Smith',
-        phones: ['+44 20 1234 5678'],
+        phones: ['+353 1 234 5678'],
         emails: ['sarah@sunnyside.com']
       }
     ],
@@ -103,9 +103,9 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
         id: 'A-002',
         label: 'Delivery Bay',
         line1: '45 Health Way',
-        city: 'Watford',
+        city: 'Naas',
         eireCode: 'W91 X2R3',
-        country: 'UK',
+        country: 'Ireland',
         isDefault: true,
         phones: [],
         emails: []
@@ -120,6 +120,7 @@ const App: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [configs, setConfigs] = useState<CustomerConfig[]>(INITIAL_CONFIGS);
   const [isDesktopCustomerView, setIsDesktopCustomerView] = useState(false);
+  const [postalCodeLabel, setPostalCodeLabel] = useState<import('./types').PostalCodeLabel>('Post Code');
 
   const handleCompleteDelivery = (orderId: string) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: OrderStatus.DELIVERED } : o));
@@ -150,6 +151,8 @@ const App: React.FC = () => {
             orders={orders}
             onUpdateConfig={handleUpdateConfig}
             onSwitchToCustomerView={() => setIsDesktopCustomerView(true)}
+            postalCodeLabel={postalCodeLabel}
+            onUpdatePostalCodeLabel={setPostalCodeLabel}
           />
         </div>
         <div className="fixed bottom-8 right-8 z-[100] shadow-2xl rounded-full">

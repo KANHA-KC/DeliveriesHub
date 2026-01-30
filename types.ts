@@ -1,9 +1,10 @@
-
 export enum UserRole {
   DRIVER = 'DRIVER',
   RECIPIENT = 'RECIPIENT',
   ADMIN = 'ADMIN'
 }
+
+export type PostalCodeLabel = 'Post Code' | 'Eire Code' | 'Zip Code' | 'Postal Index Number';
 
 export enum PODMethod {
   PHOTO = 'PHOTO',

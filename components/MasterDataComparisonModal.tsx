@@ -27,8 +27,8 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
     const [isEditing, setIsEditing] = useState(false);
     const [editedAddress, setEditedAddress] = useState<Address>(currentAddress);
 
-    // Mock Data for external systems
-    const mcLernonsData: ExternalData = {
+    // Mock Data for external systems - initialized in state below
+    const [mcLernonsData, setMcLernonsData] = useState<ExternalData>({
         source: 'McLernons',
         label: currentAddress.label,
         contactName: 'John McLernon (Mock)',
@@ -37,9 +37,9 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
         line1: '123 McLernon St',
         city: 'Dublin',
         eireCode: 'D01 XYZ1'
-    };
+    });
 
-    const sageData: ExternalData = {
+    const [sageData, setSageData] = useState<ExternalData>({
         source: 'Sage',
         label: currentAddress.label,
         contactName: 'Jane Sage (Mock)',
@@ -48,10 +48,13 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
         line1: 'Sage Business Park',
         city: 'Cork',
         eireCode: 'T12 ABC2'
-    };
+    });
 
     useEffect(() => {
         setEditedAddress(currentAddress);
+        // Reset external data based on new address if needed, or keep mock static
+        setMcLernonsData(prev => ({ ...prev, label: currentAddress.label }));
+        setSageData(prev => ({ ...prev, label: currentAddress.label }));
         setIsEditing(false);
     }, [currentAddress, isOpen]);
 
@@ -62,7 +65,15 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
         setIsEditing(false);
     };
 
-    const renderField = (label: string, value: string | string[] | undefined, fieldKey?: keyof Address, isEditable: boolean = false) => (
+    const updateExternalData = (source: 'MCLERNONS' | 'SAGE', field: keyof ExternalData, value: any) => {
+        if (source === 'MCLERNONS') {
+            setMcLernonsData({ ...mcLernonsData, [field]: value });
+        } else {
+            setSageData({ ...sageData, [field]: value });
+        }
+    };
+
+    const renderField = (label: string, value: string | string[] | undefined, fieldKey?: keyof Address, isEditable: boolean = false, onChange?: (val: any) => void) => (
         <div className="mb-3">
             <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">{label}</label>
             {isEditable && isEditing && fieldKey ? (
@@ -76,14 +87,14 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                                     onChange={(e) => {
                                         const newArray = [...value];
                                         newArray[i] = e.target.value;
-                                        setEditedAddress({ ...editedAddress, [fieldKey]: newArray });
+                                        onChange && onChange(newArray);
                                     }}
                                 />
                                 {value.length > 1 && (
                                     <button
                                         onClick={() => {
                                             const newArray = value.filter((_, idx) => idx !== i);
-                                            setEditedAddress({ ...editedAddress, [fieldKey]: newArray });
+                                            onChange && onChange(newArray);
                                         }}
                                         className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors"
                                     >
@@ -95,7 +106,7 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                         <button
                             onClick={() => {
                                 const newArray = [...value, ''];
-                                setEditedAddress({ ...editedAddress, [fieldKey]: newArray });
+                                onChange && onChange(newArray);
                             }}
                             className="text-[10px] font-bold text-[#0097a7] hover:underline"
                         >
@@ -105,8 +116,8 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                 ) : (
                     <input
                         className="w-full p-2 bg-white rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#0097a7]"
-                        value={editedAddress[fieldKey] as string || ''}
-                        onChange={(e) => setEditedAddress({ ...editedAddress, [fieldKey]: e.target.value })}
+                        value={value as string || ''}
+                        onChange={(e) => onChange && onChange(e.target.value)}
                     />
                 )
             ) : (
@@ -121,10 +132,15 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
         </div>
     );
 
-    const renderColumn = (title: string, data: Partial<Address> | ExternalData, isEditable: boolean = false, bgColor: string = 'bg-white') => (
+    const renderColumn = (title: string, data: Partial<Address> | ExternalData, isEditable: boolean = false, onChange?: (field: keyof Address, val: any) => void, bgColor: string = 'bg-white', logo?: string) => (
         <div className={`flex-1 min-w-[300px] p-4 rounded-xl border border-slate-200 ${bgColor} flex flex-col`}>
             <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-                <h3 className="font-black text-slate-700">{title}</h3>
+                <div className="flex items-center gap-3">
+                    {logo && (
+                        <img src={logo} alt={title} className="h-7 w-auto object-contain" />
+                    )}
+                    <h3 className="font-black text-slate-700">{title}</h3>
+                </div>
                 {isEditable && !isEditing && (
                     <button
                         onClick={() => setIsEditing(true)}
@@ -136,18 +152,18 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
             </div>
 
             <div className="space-y-1">
-                {renderField('Contact Name', (data as any).contactName, 'contactName', isEditable)}
-                {renderField('Phones', (data as any).phones || (data as any).phone ? [(data as any).phone] : [], 'phones', isEditable)}
-                {renderField('Emails', (data as any).emails || (data as any).email ? [(data as any).email] : [], 'emails', isEditable)}
+                {renderField('Contact Name', (data as any).contactName, 'contactName', isEditable, (v) => onChange && onChange('contactName', v))}
+                {renderField('Phones', (data as any).phones || (data as any).phone ? [(data as any).phone] : [], 'phones', isEditable, (v) => onChange && onChange('phones', v))}
+                {renderField('Emails', (data as any).emails || (data as any).email ? [(data as any).email] : [], 'emails', isEditable, (v) => onChange && onChange('emails', v))}
 
                 <div className="my-4 border-t border-slate-100"></div>
 
-                {renderField('Label', data.label, 'label', isEditable)}
-                {renderField('Line 1', data.line1, 'line1', isEditable)}
-                {renderField('Line 2', data.line2, 'line2', isEditable)}
-                {renderField('City', data.city, 'city', isEditable)}
-                {renderField('Country', data.country, 'country', isEditable)}
-                {renderField('Eirecode', data.eireCode, 'eireCode', isEditable)}
+                {renderField('Label', data.label, 'label', isEditable, (v) => onChange && onChange('label', v))}
+                {renderField('Line 1', data.line1, 'line1', isEditable, (v) => onChange && onChange('line1', v))}
+                {renderField('Line 2', data.line2, 'line2', isEditable, (v) => onChange && onChange('line2', v))}
+                {renderField('City', data.city, 'city', isEditable, (v) => onChange && onChange('city', v))}
+                {renderField('Country', data.country, 'country', isEditable, (v) => onChange && onChange('country', v))}
+                {renderField('Eirecode', data.eireCode, 'eireCode', isEditable, (v) => onChange && onChange('eireCode', v))}
             </div>
         </div>
     );
@@ -188,16 +204,16 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                     <div className="flex-1 overflow-x-auto overflow-y-auto p-6 bg-slate-50/50">
                         <div className="flex gap-4 min-w-max">
                             {/* Always show Deliveries Hub */}
-                            {renderColumn('Deliveries Hub', isEditing ? editedAddress : currentAddress, true, 'bg-white shadow-sm ring-1 ring-slate-200')}
+                            {renderColumn('Deliveries Hub', isEditing ? editedAddress : currentAddress, true, (k, v) => setEditedAddress({ ...editedAddress, [k]: v }), 'bg-white shadow-sm ring-1 ring-slate-200')}
 
                             {/* Show McLernons if selected or ALL */}
                             {(viewMode === 'MCLERNONS' || viewMode === 'ALL') && (
-                                renderColumn('McLernons', mcLernonsData, false, 'bg-[#e0f7fa]/30')
+                                renderColumn('McLernons', mcLernonsData, true, (k, v) => updateExternalData('MCLERNONS', k as any, v), 'bg-[#e0f7fa]/30', 'assets/mclernons-logo.png')
                             )}
 
                             {/* Show Sage if selected or ALL */}
                             {(viewMode === 'SAGE' || viewMode === 'ALL') && (
-                                renderColumn('Sage', sageData, false, 'bg-[#f3f4f6]')
+                                renderColumn('Sage', sageData, true, (k, v) => updateExternalData('SAGE', k as any, v), 'bg-[#f3f4f6]', 'assets/Sage-logo_svg.svg.png')
                             )}
                         </div>
                     </div>

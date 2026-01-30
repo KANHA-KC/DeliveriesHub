@@ -7,9 +7,10 @@ import { CARA_LOGO_URL } from "../constants";
 interface HubSelectionModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onOpenOrgSettings: () => void;
 }
 
-export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, onClose }) => {
+export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, onClose, onOpenOrgSettings }) => {
     if (!isOpen) return null;
 
     return (
@@ -88,7 +89,10 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
 
                         {/* Bottom Card: Admin Console */}
                         <div
-                            onClick={onClose}
+                            onClick={() => {
+                                onClose();
+                                onOpenOrgSettings();
+                            }}
                             className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 transition-all group flex items-start gap-6"
                         >
                             <div className="w-12 h-12 bg-[#F3F4F6] rounded-xl flex items-center justify-center text-gray-600 shrink-0 group-hover:bg-[#E0F2F1] group-hover:text-[#003B46] transition-colors">
@@ -99,6 +103,7 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                                 <p className="text-sm text-gray-500 mt-1">Manage users, settings, and organisation-wide configurations.</p>
                             </div>
                         </div>
+
 
                     </div>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Address, AddressHistory, CustomerConfig } from '../types';
+import { Address, AddressHistory, CustomerConfig, PostalCodeLabel } from '../types';
 import {
     MapPin,
     Plus,
@@ -20,12 +20,14 @@ interface AddressManagementViewProps {
     customer: CustomerConfig;
     onUpdate: (updatedCustomer: CustomerConfig) => void;
     currentUser?: string; // For history tracking
+    postalCodeLabel: PostalCodeLabel;
 }
 
 export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
     customer,
     onUpdate,
-    currentUser = 'System Admin'
+    currentUser = 'System Admin',
+    postalCodeLabel
 }) => {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [showHistory, setShowHistory] = useState(true);
@@ -167,7 +169,7 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase">Eire Code</label>
+                    <label className="text-[10px] font-bold text-slate-400 uppercase">{postalCodeLabel}</label>
                     <input
                         className="w-full p-3 bg-slate-50 rounded-xl border border-slate-200 focus:outline-none focus:border-[#0097a7] font-medium placeholder:text-slate-300"
                         value={tempAddress.eireCode}
@@ -352,63 +354,74 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                 key={address.id}
                                 className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm group hover:border-[#0097a7]/30 hover:shadow-md transition-all relative overflow-hidden"
                             >
-                                <div className="flex justify-between items-start">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-xl bg-[#d9f2f2] flex items-center justify-center text-[#005961] shrink-0">
-                                            <MapPin size={20} />
-                                        </div>
-                                        <div>
-                                            <div className="flex flex-wrap items-center gap-2">
-                                                <h3 className="text-lg font-black text-slate-800 tracking-tight">{address.label}</h3>
-                                                {address.isDefault && (
-                                                    <span className="text-[10px] font-bold bg-[#0097a7] text-white px-2 py-0.5 rounded-full">DEFAULT</span>
-                                                )}
+                                <div className="flex items-start gap-4">
+                                    <div className="w-10 h-10 rounded-xl bg-[#d9f2f2] flex items-center justify-center text-[#005961] shrink-0 mt-1">
+                                        <MapPin size={20} />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
+                                            <div>
+                                                <div className="flex flex-wrap items-center gap-2">
+                                                    <h3 className="text-lg font-black text-slate-800 tracking-tight">{address.label}</h3>
+                                                    {address.isDefault && (
+                                                        <span className="text-[10px] font-bold bg-[#0097a7] text-white px-2 py-0.5 rounded-full">DEFAULT</span>
+                                                    )}
+                                                </div>
+                                                <p className="text-sm text-slate-500 font-medium mt-1">
+                                                    {address.line1}
+                                                    {address.line2 && `, ${address.line2}`} • {address.city} • <span className="text-[#005961] font-bold">{address.eireCode}</span>
+                                                </p>
                                             </div>
-                                            <p className="text-sm text-slate-500 font-medium mt-1">
-                                                {address.line1}
-                                                {address.line2 && `, ${address.line2}`}<br />
-                                                {address.city}<br />
-                                                <span className="text-[#005961] font-bold">{address.eireCode}</span>
-                                            </p>
+
+                                            {/* Action buttons with logos */}
+                                            <div className="flex items-center gap-1.5 shrink-0">
+                                                {/* McLernons Button */}
+                                                <button
+                                                    onClick={() => openMasterData(address, 'MCLERNONS')}
+                                                    className="flex items-center gap-2 px-2.5 py-1 rounded-2xl border border-indigo-100 bg-[#f0f4ff] hover:bg-indigo-100 hover:border-indigo-200 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all h-8"
+                                                    title="McLernons"
+                                                >
+                                                    <img src="assets/mclernons-logo.png" alt="McLernons" className="h-4 w-auto object-contain" />
+                                                    <span className="text-[10px] font-black text-indigo-900">McLernons</span>
+                                                </button>
+
+                                                {/* Sage Button */}
+                                                <button
+                                                    onClick={() => openMasterData(address, 'SAGE')}
+                                                    className="flex items-center gap-2 px-2.5 py-1 rounded-2xl border border-emerald-100 bg-[#f0fdf4] hover:bg-emerald-100 hover:border-emerald-200 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all h-8"
+                                                    title="Sage"
+                                                >
+                                                    <img src="assets/Sage-logo_svg.svg.png" alt="Sage" className="h-4 w-auto object-contain" />
+                                                    <span className="text-[10px] font-black text-emerald-900">Sage</span>
+                                                </button>
+
+                                                {/* Compare All Button */}
+                                                <button
+                                                    onClick={() => openMasterData(address, 'ALL')}
+                                                    className="px-2.5 h-8 rounded-2xl border border-slate-200 bg-white text-slate-600 text-[10px] font-black uppercase tracking-wider hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center min-w-[40px]"
+                                                    title="Compare All"
+                                                >
+                                                    ALL
+                                                </button>
+
+                                                <div className="w-px h-5 bg-slate-200 ml-2 mr-0.5"></div>
+
+                                                <div className="flex items-center gap-1 px-0.5">
+                                                    <button
+                                                        onClick={() => handleEdit(address)}
+                                                        className="p-1.5 text-slate-400 hover:text-[#005961] hover:bg-slate-50 rounded-xl transition-all"
+                                                    >
+                                                        <Edit2 size={18} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(address.id)}
+                                                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-
-                                    {/* Master Data Buttons */}
-                                    <div className="flex items-center gap-2 mt-4 ml-14">
-                                        <button
-                                            onClick={() => openMasterData(address, 'MCLERNONS')}
-                                            className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase tracking-wider hover:bg-indigo-100 transition-colors"
-                                        >
-                                            McLernons
-                                        </button>
-                                        <button
-                                            onClick={() => openMasterData(address, 'SAGE')}
-                                            className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-100 transition-colors"
-                                        >
-                                            Sage
-                                        </button>
-                                        <button
-                                            onClick={() => openMasterData(address, 'ALL')}
-                                            className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider hover:bg-slate-200 transition-colors"
-                                        >
-                                            All
-                                        </button>
-                                    </div>
-
-                                    {/* Action buttons - always visible on mobile, hover on desktop */}
-                                    <div className="flex items-center gap-1 md:gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => handleEdit(address)}
-                                            className="p-2 text-slate-400 hover:text-[#005961] hover:bg-[#d9f2f2] rounded-lg transition-colors"
-                                        >
-                                            <Edit2 size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(address.id)}
-                                            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
                                     </div>
                                 </div>
                             </motion.div>
@@ -417,56 +430,60 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                 </div>
             </div>
 
-            {showHistory && (
-                <div className="hidden lg:flex w-80 border-l border-slate-200 pl-6 flex-col shrink-0 bg-slate-50/50 -my-6 py-6 scrollbar-hide">
-                    <div className="flex items-center justify-between mb-6">
-                        <h3 className="font-black text-slate-400 uppercase tracking-widest text-xs flex items-center gap-2">
-                            <History size={14} /> Version History
-                        </h3>
-                    </div>
+            {
+                showHistory && (
+                    <div className="hidden lg:flex w-80 border-l border-slate-200 pl-6 flex-col shrink-0 bg-slate-50/50 -my-6 py-6 scrollbar-hide">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="font-black text-slate-400 uppercase tracking-widest text-xs flex items-center gap-2">
+                                <History size={14} /> Version History
+                            </h3>
+                        </div>
 
-                    <div className="flex-1 overflow-y-auto pr-2 space-y-6">
-                        {customer.addressHistory?.length > 0 ? (
-                            customer.addressHistory.map((history) => (
-                                <div key={history.id} className="relative pl-6 pb-6 border-l-2 border-slate-200 last:border-0 last:pb-0">
-                                    <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${history.action === 'CREATED' ? 'bg-[#0097a7]' :
-                                        history.action === 'DELETED' ? 'bg-rose-500' : 'bg-amber-500'
-                                        }`} />
+                        <div className="flex-1 overflow-y-auto pr-2 space-y-6">
+                            {customer.addressHistory?.length > 0 ? (
+                                customer.addressHistory.map((history) => (
+                                    <div key={history.id} className="relative pl-6 pb-6 border-l-2 border-slate-200 last:border-0 last:pb-0">
+                                        <div className={`absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white shadow-sm ${history.action === 'CREATED' ? 'bg-[#0097a7]' :
+                                            history.action === 'DELETED' ? 'bg-rose-500' : 'bg-amber-500'
+                                            }`} />
 
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[10px] font-bold text-slate-400 uppercase">
-                                            {new Date(history.changedAt).toLocaleDateString()} • {new Date(history.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                        <p className="text-sm font-bold text-slate-700 leading-tight">
-                                            {history.details}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
-                                                <User size={10} />
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase">
+                                                {new Date(history.changedAt).toLocaleDateString()} • {new Date(history.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            <p className="text-sm font-bold text-slate-700 leading-tight">
+                                                {history.details}
+                                            </p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-slate-500">
+                                                    <User size={10} />
+                                                </div>
+                                                <span className="text-xs font-medium text-slate-500">{history.changedBy}</span>
                                             </div>
-                                            <span className="text-xs font-medium text-slate-500">{history.changedBy}</span>
                                         </div>
                                     </div>
+                                ))
+                            ) : (
+                                <div className="text-center py-10 opacity-50">
+                                    <Clock size={32} className="mx-auto mb-2 text-slate-300" />
+                                    <p className="text-xs font-bold text-slate-400">No history available</p>
                                 </div>
-                            ))
-                        ) : (
-                            <div className="text-center py-10 opacity-50">
-                                <Clock size={32} className="mx-auto mb-2 text-slate-300" />
-                                <p className="text-xs font-bold text-slate-400">No history available</p>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
-                </div>
-            )}
-            {mdModalOpen && mdAddress && (
-                <MasterDataComparisonModal
-                    isOpen={mdModalOpen}
-                    onClose={() => setMdModalOpen(false)}
-                    currentAddress={mdAddress}
-                    viewMode={mdViewMode}
-                    onSave={handleMasterDataSave}
-                />
-            )}
-        </div>
+                )
+            }
+            {
+                mdModalOpen && mdAddress && (
+                    <MasterDataComparisonModal
+                        isOpen={mdModalOpen}
+                        onClose={() => setMdModalOpen(false)}
+                        currentAddress={mdAddress}
+                        viewMode={mdViewMode}
+                        onSave={handleMasterDataSave}
+                    />
+                )
+            }
+        </div >
     );
 };

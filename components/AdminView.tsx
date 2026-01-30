@@ -32,6 +32,8 @@ import { AddressManagementView } from './AddressManagementView';
 import { LogoWithHoverMenu } from './LogoWithHoverMenu';
 import { HubSelectionModal } from './HubSelectionModal';
 import { OfficeDeliveriesView } from './OfficeDeliveriesView';
+import { OrgSettingsModal } from './OrgSettingsModal';
+import { PostalCodeLabel } from '../types';
 
 import { Order } from '../types';
 
@@ -40,6 +42,8 @@ interface AdminViewProps {
   orders: Order[];
   onUpdateConfig: (config: CustomerConfig) => void;
   onSwitchToCustomerView?: (customerName?: string) => void;
+  postalCodeLabel: PostalCodeLabel;
+  onUpdatePostalCodeLabel: (label: PostalCodeLabel) => void;
 }
 
 const STAT_DATA = [
@@ -64,11 +68,12 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateConfig, onSwitchToCustomerView }) => {
+export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateConfig, onSwitchToCustomerView, postalCodeLabel, onUpdatePostalCodeLabel }) => {
   const dragControls = useDragControls();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
   const [isHubSelectorOpen, setIsHubSelectorOpen] = useState(false);
+  const [isOrgSettingsOpen, setIsOrgSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
@@ -365,7 +370,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                   <LayoutDashboard size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Connected Systems</h3>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Addresses and Contacts</h3>
                   <p className="text-xs font-medium text-slate-400">Choose which additional systems to show in Addresses & Contacts</p>
                 </div>
               </div>
@@ -383,14 +388,25 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                           : [...current, system];
                         onUpdateConfig({ ...customer, connectedSystems: newSystems });
                       }}
-                      className={`flex items-center justify-between p-4 rounded-xl border transition-all ${isConnected
-                        ? 'bg-indigo-50 border-indigo-200 text-indigo-800 shadow-sm'
+                      className={`flex items-center justify-between p-3 rounded-2xl border-2 transition-all ${isConnected
+                        ? 'bg-[#eef2ff] border-[#c7d2fe] text-indigo-900 shadow-sm'
                         : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
                         }`}
                     >
-                      <span className="font-bold">{system === 'MCLERNONS' ? 'McLernons' : 'Sage'}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="bg-white p-1.5 rounded-xl border border-slate-100 shadow-sm flex items-center justify-center w-14 h-10 shrink-0">
+                          <img
+                            src={system === 'MCLERNONS' ? 'assets/mclernons-logo.png' : 'assets/Sage-logo_svg.svg.png'}
+                            alt={system === 'MCLERNONS' ? 'McLernons' : 'Sage'}
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </div>
+                        <span className="font-black text-sm tracking-tight">{system === 'MCLERNONS' ? 'McLernons' : 'Sage'}</span>
+                      </div>
                       {isConnected ? (
-                        <div className="bg-indigo-600 text-white rounded-full p-1.5 shadow-md"><Check size={14} strokeWidth={4} /></div>
+                        <div className="bg-indigo-600 text-white rounded-full p-1.5 shadow-md flex items-center justify-center">
+                          <Check size={14} strokeWidth={4} />
+                        </div>
                       ) : (
                         <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
                       )}
@@ -416,6 +432,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             customer={customer}
             onUpdate={onUpdateConfig}
             currentUser="System Admin"
+            postalCodeLabel={postalCodeLabel}
           />
         </div>
       )}
@@ -536,7 +553,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
         </div>
       </header>
 
-      <HubSelectionModal isOpen={isHubSelectorOpen} onClose={() => setIsHubSelectorOpen(false)} />
+      <HubSelectionModal
+        isOpen={isHubSelectorOpen}
+        onClose={() => setIsHubSelectorOpen(false)}
+        onOpenOrgSettings={() => setIsOrgSettingsOpen(true)}
+      />
+      <OrgSettingsModal
+        isOpen={isOrgSettingsOpen}
+        onClose={() => setIsOrgSettingsOpen(false)}
+        postalCodeLabel={postalCodeLabel}
+        onUpdatePostalCodeLabel={onUpdatePostalCodeLabel}
+      />
 
       {/* Customer Selection Modal */}
       {isCustomerSelectOpen && (

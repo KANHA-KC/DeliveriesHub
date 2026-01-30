@@ -22,7 +22,7 @@ export function LogoWithHoverMenu({ onOpenHub, logoSrc = ALPHALAKE_LOGO_URL, isR
                 <img
                     src={logoSrc}
                     alt="Logo"
-                    className="object-contain h-8 w-auto"
+                    className="object-contain h-12 w-auto"
                 />
             </div>
 
