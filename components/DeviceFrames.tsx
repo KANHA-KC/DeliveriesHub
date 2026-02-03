@@ -29,11 +29,6 @@ export const MobileFrame: React.FC<{ children: React.ReactNode }> = ({ children 
     return (
         <div className="min-h-screen bg-[#111] flex items-center justify-center p-8 font-sans">
             <div className="relative w-[390px] h-[844px] bg-black rounded-[55px] border-[12px] border-black shadow-[0_0_0_2px_#333,0_20px_40px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col">
-                {/* Dynamic Island */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[120px] h-[35px] bg-black rounded-full z-50 pointer-events-none"></div>
-
-                {/* Status Bar Placeholder (optional, but helps push content if needed, though usually app handles it) */}
-
                 {/* Screen Content */}
                 <div className="flex-1 bg-white overflow-hidden relative z-10 w-full h-full rounded-[44px]">
                     {children}

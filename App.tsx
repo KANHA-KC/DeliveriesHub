@@ -189,9 +189,6 @@ const App: React.FC = () => {
       <div className="relative">
         <MobileFrame>
           <div className="h-full w-full bg-white flex flex-col">
-            {/* Spacer for notch */}
-            <div className="h-[44px] bg-white w-full shrink-0" />
-
             <div className="flex-1 overflow-hidden relative">
               <DriverView
                 orders={orders}
@@ -214,9 +211,6 @@ const App: React.FC = () => {
     <div className="relative">
       <MobileFrame>
         <div className="h-full w-full bg-white flex flex-col">
-          {/* Spacer for notch */}
-          <div className="h-[44px] bg-white w-full shrink-0" />
-
           <div className="flex-1 overflow-hidden relative">
             <RecipientView
               orders={orders}

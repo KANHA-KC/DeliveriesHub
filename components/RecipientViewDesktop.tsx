@@ -305,15 +305,15 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                                         {/* CTA Card */}
                                         <div className="mt-8 bg-gradient-to-br from-[#005961] to-[#0097a7] rounded-3xl p-8 text-white shadow-xl">
                                             <div className="max-w-2xl">
-                                                <h4 className="text-xl font-bold mb-3">Managing multiple sites?</h4>
+                                                <h4 className="text-xl font-bold mb-3">Manage site details</h4>
                                                 <p className="text-sm text-cyan-100 opacity-90 leading-relaxed mb-6">
-                                                    Bulk register your homes for priority notifications and custom delivery notes. Streamline your operations with our advanced address management system.
+                                                    Add new and edit existing site contact details and addresses
                                                 </p>
                                                 <button
                                                     onClick={() => setView('ADDRESSES')}
                                                     className="bg-white text-[#005961] px-6 py-3 rounded-xl text-sm font-bold shadow-lg flex items-center gap-2 hover:shadow-xl transition-all"
                                                 >
-                                                    Manage Addresses <ArrowRight size={16} />
+                                                    Addresses and Contacts <ArrowRight size={16} />
                                                 </button>
                                             </div>
                                         </div>

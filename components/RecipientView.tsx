@@ -199,14 +199,14 @@ export const RecipientView: React.FC<RecipientViewProps> = ({ orders, customerCo
 
               <div className="bg-[#005961] rounded-3xl p-6 text-white mt-4 shadow-xl shadow-[#005961]/20">
                 <div className="mb-4">
-                  <h4 className="font-bold mb-2">Managing multiple sites?</h4>
-                  <p className="text-xs text-cyan-100 opacity-90 leading-relaxed max-w-[90%]">Bulk register your homes for priority notifications and custom delivery notes.</p>
+                  <h4 className="font-bold mb-2">Manage site details</h4>
+                  <p className="text-xs text-cyan-100 opacity-90 leading-relaxed max-w-[90%]">Add new and edit existing site contact details and addresses</p>
                 </div>
                 <button
                   onClick={() => setView('ADDRESSES')}
                   className="bg-white text-[#005961] px-4 py-2 rounded-xl text-xs font-bold shadow-lg flex items-center gap-2"
                 >
-                  Manage Addresses <ArrowRight size={14} />
+                  Addresses and Contacts <ArrowRight size={14} />
                 </button>
               </div>
             </div>

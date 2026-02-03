@@ -398,10 +398,10 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                                 {/* Compare All Button */}
                                                 <button
                                                     onClick={() => openMasterData(address, 'ALL')}
-                                                    className="px-2.5 h-8 rounded-2xl border border-slate-200 bg-white text-slate-600 text-[10px] font-black uppercase tracking-wider hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center min-w-[40px]"
+                                                    className="px-2.5 h-8 rounded-2xl border border-slate-200 bg-white text-slate-600 text-[10px] font-black tracking-wider hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center min-w-[40px]"
                                                     title="Compare All"
                                                 >
-                                                    ALL
+                                                    Check
                                                 </button>
 
                                                 <div className="w-px h-5 bg-slate-200 ml-2 mr-0.5"></div>
