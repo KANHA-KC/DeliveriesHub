@@ -54,6 +54,12 @@ export interface Address {
   contactName?: string;
   phones?: string[];
   emails?: string[];
+  nextOfKin?: string;
+  autoSync?: {
+    enabled: boolean;
+    primarySystem: 'MCLERNONS' | 'SAGE' | 'ALPHALAKE';
+    approved: boolean; // Requires admin approval
+  };
 }
 
 export interface AddressHistory {

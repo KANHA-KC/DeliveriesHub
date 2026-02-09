@@ -688,7 +688,7 @@ export const DriverView: React.FC<DriverViewProps> = ({ orders, onCompleteDelive
           <h2 className="text-white font-bold">Warehouse Loading</h2>
         </div>
         <ScanningView
-          orders={orders}
+          orders={pendingOrders}
           onUpdateParcel={onUpdateParcel}
           scanMode="WAREHOUSE"
         />

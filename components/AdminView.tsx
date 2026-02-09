@@ -32,7 +32,7 @@ import { AddressManagementView } from './AddressManagementView';
 import { LogoWithHoverMenu } from './LogoWithHoverMenu';
 import { HubSelectionModal } from './HubSelectionModal';
 import { OfficeDeliveriesView } from './OfficeDeliveriesView';
-import { OrgSettingsModal } from './OrgSettingsModal';
+import { OrgSettingsView } from './OrgSettingsView';
 import { PostalCodeLabel } from '../types';
 
 import { Order } from '../types';
@@ -73,12 +73,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
   const [searchTerm, setSearchTerm] = useState('');
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
   const [isHubSelectorOpen, setIsHubSelectorOpen] = useState(false);
-  const [isOrgSettingsOpen, setIsOrgSettingsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<'general' | 'addresses'>('general');
+  const [orgSettingsInitialTab, setOrgSettingsInitialTab] = useState<'general' | 'connectors' | 'printing' | 'notifications'>('general');
 
   const activeCustomer = configs.find(c => c.id === editingCustomerId);
 
@@ -451,7 +451,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
           </button>
 
           <div className="flex items-center gap-1 ml-0">
-            <div className="h-8 flex items-center">
+            <div
+              className="h-8 flex items-center cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => {
+                setOrgSettingsInitialTab('connectors');
+                setActiveTab('org-settings');
+                setEditingCustomerId(null);
+              }}
+            >
               <img src={ALPHALAKE_LOGO_URL} alt="Alphalake Ai" className="h-full object-contain" />
             </div>
             <div className="h-8 w-[1px] bg-gray-500 mx-2" />
@@ -556,13 +563,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
       <HubSelectionModal
         isOpen={isHubSelectorOpen}
         onClose={() => setIsHubSelectorOpen(false)}
-        onOpenOrgSettings={() => setIsOrgSettingsOpen(true)}
-      />
-      <OrgSettingsModal
-        isOpen={isOrgSettingsOpen}
-        onClose={() => setIsOrgSettingsOpen(false)}
-        postalCodeLabel={postalCodeLabel}
-        onUpdatePostalCodeLabel={onUpdatePostalCodeLabel}
+        onOpenOrgSettings={() => {
+          setIsHubSelectorOpen(false);
+          setActiveTab('org-settings');
+          setEditingCustomerId(null);
+        }}
       />
 
       {/* Customer Selection Modal */}
@@ -679,6 +684,13 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
               <OfficeDeliveriesView orders={orders} configs={configs} />
             ) : editingCustomerId && activeCustomer ? (
               renderSettings(activeCustomer)
+            ) : activeTab === 'org-settings' ? (
+              <OrgSettingsView
+                postalCodeLabel={postalCodeLabel}
+                onUpdatePostalCodeLabel={onUpdatePostalCodeLabel}
+                onBack={() => setActiveTab('dashboard')}
+                initialTab={orgSettingsInitialTab}
+              />
             ) : (
               renderDashboard()
             )}
