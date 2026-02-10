@@ -1101,7 +1101,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                         </h2>
                         <p className="text-slate-400 font-medium">
                             {viewMode === 'ORG'
-                                ? 'Manage your organization preferences and configurations'
+                                ? 'Manage user settings, integrations and Org wise configurations'
                                 : 'Manage hub-specific configurations for printing and notifications'
                             }
                         </p>
