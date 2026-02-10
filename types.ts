@@ -40,6 +40,10 @@ export interface CustomerConfig {
   addressHistory: AddressHistory[];
   hasCustomerPortal?: boolean; // Whether customer has paid for Customer Portal access
   connectedSystems?: string[];
+  contactName?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
 }
 
 export interface Address {

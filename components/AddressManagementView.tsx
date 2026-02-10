@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Address, AddressHistory, CustomerConfig, PostalCodeLabel } from '../types';
+import { ALPHALAKE_LOGO_URL } from '../constants';
 import {
     MapPin,
     Plus,
@@ -328,12 +329,8 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
 
     return (
         <div className="flex flex-col lg:flex-row h-full gap-6">
-            <div className="flex-1 flex flex-col min-w-0">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 className="text-xl lg:text-2xl font-black text-[#005961] tracking-tight">Addresses & Contacts</h2>
-                        <p className="text-xs lg:text-sm text-slate-400 font-medium">Manage authorized drop-off locations and contacts</p>
-                    </div>
+            <div className="flex-1 flex flex-col min-w-0 relative">
+                <div className="absolute right-2 -top-12 z-10">
                     <button
                         onClick={handleAdd}
                         disabled={!!editingId}
@@ -352,77 +349,127 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                             <motion.div
                                 layout
                                 key={address.id}
-                                className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm group hover:border-[#0097a7]/30 hover:shadow-md transition-all relative overflow-hidden"
+                                className="bg-white rounded-2xl border border-slate-200 shadow-sm group hover:border-[#0097a7]/30 hover:shadow-md transition-all relative overflow-hidden"
                             >
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl bg-[#d9f2f2] flex items-center justify-center text-[#005961] shrink-0 mt-1">
-                                        <MapPin size={20} />
+                                {/* Row 1: Deliveries Hub (Primary) */}
+                                <div className="px-6 py-4 flex items-center gap-4">
+                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 bg-slate-50 rounded-xl">
+                                        <img
+                                            src="assets/AL Non white all.png"
+                                            alt="Alphalake AI"
+                                            className="w-full h-full object-contain"
+                                        />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex flex-col xl:flex-row xl:items-start justify-between gap-4">
-                                            <div>
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <h3 className="text-lg font-black text-slate-800 tracking-tight">{address.label}</h3>
+                                    <div className="flex-1 min-w-0 pr-4">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <div className="flex flex-col">
+                                                <div className="flex items-center gap-2 mb-0.5">
+                                                    <span className="text-sm font-black text-slate-700 leading-tight">Deliveries Hub</span>
                                                     {address.isDefault && (
-                                                        <span className="text-[10px] font-bold bg-[#0097a7] text-white px-2 py-0.5 rounded-full">DEFAULT</span>
+                                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">• Default</span>
                                                     )}
                                                 </div>
-                                                <p className="text-sm text-slate-500 font-medium mt-1">
-                                                    {address.line1}
-                                                    {address.line2 && `, ${address.line2}`} • {address.city} • <span className="text-[#005961] font-bold">{address.eireCode}</span>
-                                                </p>
+                                                <span className="text-[10px] font-bold text-[#0097a7] uppercase tracking-widest">Primary System</span>
                                             </div>
 
-                                            {/* Action buttons with logos */}
-                                            <div className="flex items-center gap-1.5 shrink-0">
-                                                {/* McLernons Button */}
+                                            {/* Top Right Actions */}
+                                            <div className="flex items-center gap-1">
                                                 <button
-                                                    onClick={() => openMasterData(address, 'MCLERNONS')}
-                                                    className="flex items-center gap-2 px-2.5 py-1 rounded-2xl border border-indigo-100 bg-[#f0f4ff] hover:bg-indigo-100 hover:border-indigo-200 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all h-8"
-                                                    title="McLernons"
+                                                    onClick={() => handleEdit(address)}
+                                                    className="p-1.5 text-slate-400 hover:text-[#005961] hover:bg-slate-50 rounded-lg transition-all"
+                                                    title="Edit Address"
                                                 >
-                                                    <img src="assets/mclernons-logo.png" alt="McLernons" className="h-4 w-auto object-contain" />
-                                                    <span className="text-[10px] font-black text-indigo-900">McLernons</span>
+                                                    <Edit2 size={16} />
                                                 </button>
-
-                                                {/* Sage Button */}
                                                 <button
-                                                    onClick={() => openMasterData(address, 'SAGE')}
-                                                    className="flex items-center gap-2 px-2.5 py-1 rounded-2xl border border-emerald-100 bg-[#f0fdf4] hover:bg-emerald-100 hover:border-emerald-200 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all h-8"
-                                                    title="Sage"
+                                                    onClick={() => handleDelete(address.id)}
+                                                    className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                                                    title="Delete Address"
                                                 >
-                                                    <img src="assets/Sage-logo_svg.svg.png" alt="Sage" className="h-4 w-auto object-contain" />
-                                                    <span className="text-[10px] font-black text-emerald-900">Sage</span>
+                                                    <Trash2 size={16} />
                                                 </button>
-
-                                                {/* Compare All Button */}
-                                                <button
-                                                    onClick={() => openMasterData(address, 'ALL')}
-                                                    className="px-2.5 h-8 rounded-2xl border border-slate-200 bg-white text-slate-600 text-[10px] font-black tracking-wider hover:bg-slate-50 hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center min-w-[40px]"
-                                                    title="Compare All"
-                                                >
-                                                    Check
-                                                </button>
-
-                                                <div className="w-px h-5 bg-slate-200 ml-2 mr-0.5"></div>
-
-                                                <div className="flex items-center gap-1 px-0.5">
-                                                    <button
-                                                        onClick={() => handleEdit(address)}
-                                                        className="p-1.5 text-slate-400 hover:text-[#005961] hover:bg-slate-50 rounded-xl transition-all"
-                                                    >
-                                                        <Edit2 size={18} />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleDelete(address.id)}
-                                                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all"
-                                                    >
-                                                        <Trash2 size={18} />
-                                                    </button>
-                                                </div>
                                             </div>
                                         </div>
+                                        <div className="flex flex-col gap-0.5 mt-2">
+                                            <p className="text-xs text-slate-500 font-medium">
+                                                <span className="font-bold text-slate-700">123 Deliveries Hub St</span>, Unit 1A, Town, County Dublin
+                                            </p>
+                                            <p className="text-xs font-bold text-[#0097a7]">
+                                                D01 ABC1 <span className="text-slate-400 font-normal uppercase tracking-wider text-[10px] ml-1">• Ireland (IE)</span>
+                                            </p>
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Row 2: McLernons */}
+                                <div
+                                    onClick={() => openMasterData(address, 'MCLERNONS')}
+                                    className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:pl-7 transition-all cursor-pointer group/row flex items-center gap-4"
+                                >
+                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
+                                        <img src="assets/mclernons-logo.png" alt="McLernons" className="w-full h-full object-contain" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 pr-4">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-black text-slate-700 leading-tight">McLernons</span>
+                                                <span className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest">Patient Meds Records</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase">View Details</span>
+                                                <ArrowRight size={14} className="text-indigo-400" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-0.5 mt-2">
+                                            <p className="text-xs text-slate-500 font-medium">
+                                                <span className="font-bold text-slate-700">123 McLernon St</span>, Unit 4B, Town, County Dublin
+                                            </p>
+                                            <p className="text-xs font-bold text-indigo-600">
+                                                D01 XYZ1 <span className="text-slate-400 font-normal uppercase tracking-wider text-[10px] ml-1">• Ireland (IE)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Row 3: Sage */}
+                                <div
+                                    onClick={() => openMasterData(address, 'SAGE')}
+                                    className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:pl-7 transition-all cursor-pointer group/row flex items-center gap-4"
+                                >
+                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
+                                        <img src="assets/Sage-logo_svg.svg.png" alt="Sage" className="w-full h-full object-contain" />
+                                    </div>
+                                    <div className="flex-1 min-w-0 pr-4">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-black text-slate-700 leading-tight">Sage</span>
+                                                <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Financial Data</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase">View Details</span>
+                                                <ArrowRight size={14} className="text-emerald-500" />
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-0.5 mt-2">
+                                            <p className="text-xs text-slate-500 font-medium">
+                                                <span className="font-bold text-slate-700">123 Sage St</span>, Unit 10C, Town, County Dublin
+                                            </p>
+                                            <p className="text-xs font-bold text-emerald-600">
+                                                D01 1234 <span className="text-slate-400 font-normal uppercase tracking-wider text-[10px] ml-1">• Ireland (IE)</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Action Footer */}
+                                <div className="px-6 py-3 bg-slate-50 border-t border-slate-100 flex justify-end items-center">
+                                    <button
+                                        onClick={() => openMasterData(address, 'ALL')}
+                                        className="px-6 py-2 rounded-xl bg-[#005961] text-white text-xs font-bold shadow-md hover:bg-[#00424a] hover:shadow-lg hover:-translate-y-0.5 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                        title="Compare All"
+                                    >
+                                        Compare
+                                    </button>
                                 </div>
                             </motion.div>
                         );
@@ -484,6 +531,7 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                     />
                 )
             }
+
         </div >
     );
 };

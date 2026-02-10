@@ -1,8 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { Address } from '../types';
-import { X, Save, Edit2, AlertCircle, RefreshCw, CheckCircle, ShieldCheck } from 'lucide-react';
+import { X, Save, Edit2, AlertCircle, RefreshCw, CheckCircle, ShieldCheck, Building2, User, MapPin, Share2, Mail, Phone, Globe, ExternalLink, Hash, FileText, ChevronDown, HelpCircle } from 'lucide-react';
 import { ALPHALAKE_LOGO_URL } from '../constants';
 import { motion, AnimatePresence } from 'framer-motion';
+
+interface SageExtendedData {
+    source: string;
+    // Account Details
+    account: string;
+    companyName: string;
+    companyRegNumber: string;
+    balance: number;
+    currency: string;
+    inactive: boolean;
+    // Contact Information
+    contactName: string;
+    tradeContact: string;
+    telephone: string;
+    telephone2: string;
+    fax: string;
+    website: string;
+    // Registered Address
+    label: string;
+    street1: string;
+    street2: string;
+    town: string;
+    county: string;
+    postCode: string;
+    country: string;
+    vatNumber: string;
+    eoriNumber: string;
+    // Social Media
+    twitter: string;
+    linkedin: string;
+    facebook: string;
+    // Email Settings
+    email1: string;
+    email2: string;
+    email3: string;
+}
+
+interface McLernonsExtendedData {
+    source: string;
+    // Personal Details
+    surname: string;
+    forenames: string;
+    title: string;
+    sex: string;
+    // Address Details
+    street: string;
+    town: string;
+    county: string;
+    eircode: string;
+    country: string;
+    // Storage Information
+    storage: string;
+}
 
 export type MasterDataViewMode = 'MCLERNONS' | 'SAGE' | 'ALL';
 
@@ -29,28 +82,57 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
     const [editedAddress, setEditedAddress] = useState<Address>(currentAddress);
 
     // Mock Data for external systems - initialized in state below
-    const [mcLernonsData, setMcLernonsData] = useState<ExternalData>({
+    const [mcLernonsData, setMcLernonsData] = useState<McLernonsExtendedData>({
         source: 'McLernons',
-        label: currentAddress.label,
-        contactName: 'John McLernon (Mock)',
-        phones: ['+353 1 234 5678'],
-        emails: ['john.mclernon@example.com'],
-        line1: '123 McLernon St',
-        city: 'Dublin',
-        eireCode: 'D01 XYZ1',
-        nextOfKin: 'Mary McLernon'
+        // Personal Details
+        surname: 'McLernon',
+        forenames: 'John',
+        title: 'Mr',
+        sex: 'Male',
+        // Address Details
+        street: '123 McLernon St\nUnit 4B',
+        town: 'Dublin',
+        county: 'County Dublin',
+        eircode: 'D01 XYZ1',
+        country: 'IE',
+        // Storage Information
+        storage: 'LOC-NW-042'
     });
 
-    const [sageData, setSageData] = useState<ExternalData>({
+    const [sageData, setSageData] = useState<SageExtendedData>({
         source: 'Sage',
-        label: currentAddress.label,
+        // Account Details
+        account: 'ACC001',
+        companyName: 'Sunnyside Nursing Home',
+        companyRegNumber: '567890',
+        balance: 12450.00,
+        currency: 'EUR',
+        inactive: false,
+        // Contact Information
         contactName: 'Jane Sage (Mock)',
-        phones: ['+353 1 987 6543'],
-        emails: ['accounts@example.com'],
-        line1: 'Sage Business Park',
-        city: 'Cork',
-        eireCode: 'T12 ABC2',
-        nextOfKin: 'John Sage'
+        tradeContact: 'Michael Trade',
+        telephone: '+353 1 987 6543',
+        telephone2: '',
+        fax: '+353 1 987 6544',
+        website: 'https://www.sunnyside.ie',
+        // Registered Address
+        label: currentAddress.label,
+        street1: 'Sage Business Park',
+        street2: '',
+        town: 'Cork',
+        county: 'County Cork',
+        postCode: 'T12 ABC2',
+        country: 'IE',
+        vatNumber: 'IE1234567X',
+        eoriNumber: 'IE1234567',
+        // Social Media
+        twitter: '',
+        linkedin: '',
+        facebook: '',
+        // Email Settings
+        email1: 'accounts@sunnyside.ie',
+        email2: '',
+        email3: ''
     });
 
     const [showAutoSyncModal, setShowAutoSyncModal] = useState(false);
@@ -77,7 +159,6 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
     useEffect(() => {
         setEditedAddress(currentAddress);
         // Reset external data based on new address if needed, or keep mock static
-        setMcLernonsData(prev => ({ ...prev, label: currentAddress.label }));
         setSageData(prev => ({ ...prev, label: currentAddress.label }));
         setIsEditing(false);
     }, [currentAddress, isOpen]);
@@ -98,15 +179,17 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
     };
 
     const renderField = (label: string, value: string | string[] | undefined, fieldKey?: keyof Address, isEditable: boolean = false, onChange?: (val: any) => void) => (
-        <div className="mb-3">
-            <label className="text-[10px] font-bold text-slate-400 uppercase block mb-1">{label}</label>
+        <div className="group/field mb-4 last:mb-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] block mb-1.5 group-hover/field:text-[#0097a7] transition-colors">
+                {label}
+            </label>
             {isEditable && isEditing && fieldKey ? (
                 Array.isArray(value) ? (
                     <div className="space-y-2">
                         {value.map((v, i) => (
                             <div key={i} className="flex gap-2">
                                 <input
-                                    className="w-full p-2 bg-white rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#0097a7]"
+                                    className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0097a7]/20 focus:border-[#0097a7] transition-all"
                                     value={v}
                                     onChange={(e) => {
                                         const newArray = [...value];
@@ -120,7 +203,7 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                                             const newArray = value.filter((_, idx) => idx !== i);
                                             onChange && onChange(newArray);
                                         }}
-                                        className="p-1.5 text-slate-400 hover:text-rose-500 transition-colors"
+                                        className="p-2 text-slate-300 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
                                     >
                                         <X size={14} />
                                     </button>
@@ -132,79 +215,441 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                                 const newArray = [...value, ''];
                                 onChange && onChange(newArray);
                             }}
-                            className="text-[10px] font-bold text-[#0097a7] hover:underline"
+                            className="text-[10px] font-black text-[#0097a7] hover:text-[#005961] flex items-center gap-1 transition-colors uppercase tracking-wider"
                         >
                             + Add another
                         </button>
                     </div>
                 ) : (
                     <input
-                        className="w-full p-2 bg-white rounded-lg border border-slate-300 text-sm focus:outline-none focus:border-[#0097a7]"
+                        className="w-full px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0097a7]/20 focus:border-[#0097a7] transition-all"
                         value={value as string || ''}
                         onChange={(e) => onChange && onChange(e.target.value)}
                     />
                 )
             ) : (
-                <div className="text-sm font-medium text-slate-700 break-words min-h-[1.25rem]">
+                <div className="text-sm font-bold text-slate-700 break-words min-h-[1.25rem] leading-relaxed">
                     {Array.isArray(value) ? (
-                        value.length > 0 ? value.map((v, i) => <div key={i}>{v}</div>) : '-'
+                        value.length > 0 ? (
+                            <div className="space-y-0.5">
+                                {value.map((v, i) => <div key={i} className="flex items-center gap-2">{v}</div>)}
+                            </div>
+                        ) : <span className="text-slate-300 font-medium">Not provided</span>
                     ) : (
-                        value || '-'
+                        value || <span className="text-slate-300 font-medium">—</span>
                     )}
                 </div>
             )}
         </div>
     );
 
-    const renderColumn = (title: string, data: Partial<Address> | ExternalData, isEditable: boolean = false, onChange?: (field: keyof Address, val: any) => void, bgColor: string = 'bg-white', logo?: string, customLabels: Record<string, string> = {}) => (
-        <div className={`flex-1 min-w-[300px] p-4 rounded-xl border border-slate-200 ${bgColor} flex flex-col`}>
-            <div className="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-3">
-                    {logo && (
-                        <img
-                            src={logo}
-                            alt={title}
-                            className="h-7 w-auto object-contain"
-                            style={title === 'Deliveries Hub' ? { filter: 'brightness(0) saturate(100%) invert(28%) sepia(91%) saturate(543%) hue-rotate(143deg) brightness(91%) contrast(100%)' } : {}}
-                        />
-                    )}
-                    <h3 className="font-black text-slate-700">{title}</h3>
-                    {title === 'Deliveries Hub' && data.autoSync?.enabled && (
-                        <div className="ml-2 flex items-center gap-1 bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded-full border border-emerald-100">
-                            <RefreshCw size={10} className="animate-spin-slow" />
-                            <span className="text-[9px] font-bold uppercase tracking-wide">
-                                {data.autoSync.approved ? 'Primary Sync On' : 'Sync Pending'}
-                            </span>
+    const renderColumn = (title: string, data: Partial<Address> | ExternalData, isEditable: boolean = false, onChange?: (field: keyof Address, val: any) => void, accentColor: string = '#0097a7', logo?: string, customLabels: Record<string, string> = {}) => (
+        <div className="flex-1 min-w-[340px] group/card">
+            <div className={`h-full bg-white rounded-[2rem] border border-slate-100 shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 transition-all duration-500 flex flex-col overflow-hidden relative`}>
+
+
+                <div className="p-6 flex flex-col flex-1">
+                    <div className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-4">
+                            {logo && (
+                                <img
+                                    src={logo}
+                                    alt={title}
+                                    className="h-10 w-auto object-contain"
+                                    style={title === 'Deliveries Hub' ? { filter: 'brightness(0) saturate(100%) invert(28%) sepia(91%) saturate(543%) hue-rotate(143deg) brightness(91%) contrast(100%)' } : {}}
+                                />
+                            )}
+                            <div>
+                                <h3 className="text-lg font-black text-slate-900 leading-tight">{title}</h3>
+                                {title === 'Deliveries Hub' && (
+                                    <span className="text-[10px] font-bold text-[#0097a7] uppercase tracking-wider">Primary System</span>
+                                )}
+                            </div>
                         </div>
-                    )}
+                        {isEditable && !isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="p-2.5 bg-slate-50 hover:bg-[#0097a7] text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100"
+                            >
+                                <Edit2 size={16} />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex-1 space-y-2">
+                        <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100/50 space-y-4">
+                            {renderField(customLabels.contactName || 'Contact Name', (data as any).contactName, 'contactName', isEditable, (v) => onChange && onChange('contactName', v))}
+                            {renderField(customLabels.phones || 'Phones', (data as any).phones || (data as any).phone ? [(data as any).phone] : [], 'phones', isEditable, (v) => onChange && onChange('phones', v))}
+                            {renderField(customLabels.emails || 'Emails', (data as any).emails || (data as any).email ? [(data as any).email] : [], 'emails', isEditable, (v) => onChange && onChange('emails', v))}
+                        </div>
+
+                        <div className="px-4 py-2">
+                            <div className="h-px w-full bg-slate-100"></div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-4 space-y-4">
+                            {renderField(customLabels.label || 'Label', data.label, 'label', isEditable, (v) => onChange && onChange('label', v))}
+                            {renderField(customLabels.line1 || 'Line 1', data.line1, 'line1', isEditable, (v) => onChange && onChange('line1', v))}
+                            {renderField(customLabels.line2 || 'Line 2', data.line2, 'line2', isEditable, (v) => onChange && onChange('line2', v))}
+                            {renderField(customLabels.city || 'City', data.city, 'city', isEditable, (v) => onChange && onChange('city', v))}
+                            {renderField(customLabels.country || 'Country', data.country, 'country', isEditable, (v) => onChange && onChange('country', v))}
+                            {renderField(customLabels.eireCode || 'Eircode', data.eireCode, 'eireCode', isEditable, (v) => onChange && onChange('eireCode', v))}
+                        </div>
+
+                        <div className="mt-4 pt-4 border-t border-slate-50">
+                            {renderField(customLabels.nextOfKin || 'Next of Kin', (data as any).nextOfKin, 'nextOfKin', isEditable, (v) => onChange && onChange('nextOfKin', v))}
+                        </div>
+                    </div>
                 </div>
-                {isEditable && !isEditing && (
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-[#0097a7] transition-colors"
-                    >
-                        <Edit2 size={16} />
-                    </button>
-                )}
             </div>
+        </div>
+    );
 
-            <div className="space-y-1">
-                {renderField(customLabels.contactName || 'Contact Name', (data as any).contactName, 'contactName', isEditable, (v) => onChange && onChange('contactName', v))}
-                {renderField(customLabels.phones || 'Phones', (data as any).phones || (data as any).phone ? [(data as any).phone] : [], 'phones', isEditable, (v) => onChange && onChange('phones', v))}
-                {renderField(customLabels.emails || 'Emails', (data as any).emails || (data as any).email ? [(data as any).email] : [], 'emails', isEditable, (v) => onChange && onChange('emails', v))}
+    const renderMcLernonsField = (label: string, value: string, fieldKey: string, type: string = 'text') => (
+        <div className="group/field mb-4 last:mb-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] block mb-1.5 group-hover/field:text-indigo-600 transition-colors">
+                {label}
+            </label>
+            {isEditing ? (
+                type === 'title' ? (
+                    <select
+                        value={value}
+                        onChange={(e) => setMcLernonsData({ ...mcLernonsData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    >
+                        <option value="Mr">Mr</option>
+                        <option value="Mrs">Mrs</option>
+                        <option value="Ms">Ms</option>
+                        <option value="Dr">Dr</option>
+                        <option value="Prof">Prof</option>
+                    </select>
+                ) : type === 'sex' ? (
+                    <select
+                        value={value}
+                        onChange={(e) => setMcLernonsData({ ...mcLernonsData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                ) : type === 'country' ? (
+                    <select
+                        value={value}
+                        onChange={(e) => setMcLernonsData({ ...mcLernonsData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    >
+                        <option value="IE">Ireland (IE)</option>
+                        <option value="GB">United Kingdom (GB)</option>
+                        <option value="US">United States (US)</option>
+                        <option value="DE">Germany (DE)</option>
+                        <option value="FR">France (FR)</option>
+                    </select>
+                ) : type === 'textarea' ? (
+                    <textarea
+                        value={value}
+                        onChange={(e) => setMcLernonsData({ ...mcLernonsData, [fieldKey]: e.target.value })}
+                        rows={3}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                    />
+                ) : (
+                    <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => setMcLernonsData({ ...mcLernonsData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    />
+                )
+            ) : (
+                <div className="text-sm font-bold text-slate-700 break-words min-h-[1.25rem] whitespace-pre-line leading-relaxed">
+                    {type === 'country' ? (
+                        value === 'IE' ? 'Ireland (IE)' :
+                            value === 'GB' ? 'United Kingdom (GB)' :
+                                value === 'US' ? 'United States (US)' :
+                                    value === 'DE' ? 'Germany (DE)' :
+                                        value === 'FR' ? 'France (FR)' : (value || <span className="text-slate-300 font-medium">—</span>)
+                    ) : (value || <span className="text-slate-300 font-medium">—</span>)}
+                </div>
+            )}
+        </div>
+    );
 
-                <div className="my-4 border-t border-slate-100"></div>
+    const renderMcLernonsColumn = () => (
+        <div className="flex-1 min-w-[360px] group/card">
+            <div className="h-full bg-white rounded-[2rem] border border-slate-100 shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 transition-all duration-500 flex flex-col overflow-hidden">
 
-                {renderField(customLabels.label || 'Label', data.label, 'label', isEditable, (v) => onChange && onChange('label', v))}
-                {renderField(customLabels.line1 || 'Line 1', data.line1, 'line1', isEditable, (v) => onChange && onChange('line1', v))}
-                {renderField(customLabels.line2 || 'Line 2', data.line2, 'line2', isEditable, (v) => onChange && onChange('line2', v))}
-                {renderField(customLabels.city || 'City', data.city, 'city', isEditable, (v) => onChange && onChange('city', v))}
-                {renderField(customLabels.country || 'Country', data.country, 'country', isEditable, (v) => onChange && onChange('country', v))}
-                {renderField(customLabels.eireCode || 'Eirecode', data.eireCode, 'eireCode', isEditable, (v) => onChange && onChange('eireCode', v))}
 
-                <div className="my-4 border-t border-slate-100"></div>
+                <div className="p-6 flex flex-col flex-1">
+                    <div className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-4">
+                            <img src="assets/mclernons-logo.png" alt="McLernons" className="h-10 w-auto object-contain" />
+                            <div>
+                                <h3 className="text-lg font-black text-slate-900 leading-tight">McLernons</h3>
+                                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider">Patient Meds Records</span>
+                            </div>
+                        </div>
+                        {!isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="p-2.5 bg-slate-50 hover:bg-indigo-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100"
+                            >
+                                <Edit2 size={16} />
+                            </button>
+                        )}
+                    </div>
 
-                {renderField(customLabels.nextOfKin || 'Next of Kin', (data as any).nextOfKin, 'nextOfKin', isEditable, (v) => onChange && onChange('nextOfKin', v))}
+                    <div className="flex-1 space-y-2">
+                        {/* 1. Personal Details */}
+                        <div className="bg-indigo-50/30 rounded-2xl p-4 border border-indigo-100/50">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-white rounded-lg shadow-sm border border-indigo-100">
+                                    <User size={12} className="text-indigo-600" />
+                                </div>
+                                <span className="text-[10px] font-black text-indigo-900 uppercase tracking-widest">Personal Details</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-x-4">
+                                {renderMcLernonsField('Surname', mcLernonsData.surname, 'surname')}
+                                {renderMcLernonsField('Forenames', mcLernonsData.forenames, 'forenames')}
+                                {renderMcLernonsField('Title', mcLernonsData.title, 'title', 'title')}
+                                {renderMcLernonsField('Sex', mcLernonsData.sex, 'sex', 'sex')}
+                            </div>
+                        </div>
+
+                        {/* 2. Address Details */}
+                        <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-slate-50 rounded-lg shadow-sm border border-slate-100">
+                                    <MapPin size={12} className="text-orange-600" />
+                                </div>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Address Details</span>
+                            </div>
+                            {renderMcLernonsField('Street', mcLernonsData.street, 'street', 'textarea')}
+                            <div className="grid grid-cols-2 gap-x-4">
+                                {renderMcLernonsField('Town', mcLernonsData.town, 'town')}
+                                {renderMcLernonsField('County', mcLernonsData.county, 'county')}
+                                {renderMcLernonsField('Eircode', mcLernonsData.eircode, 'eircode')}
+                                {renderMcLernonsField('Country', mcLernonsData.country, 'country', 'country')}
+                            </div>
+                        </div>
+
+                        {/* 3. Storage Information */}
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-white rounded-lg shadow-sm border border-slate-100">
+                                    <Building2 size={12} className="text-[#005961]" />
+                                </div>
+                                <span className="text-[10px] font-black text-[#005961] uppercase tracking-widest">Storage Information</span>
+                            </div>
+                            {renderMcLernonsField('Storage', mcLernonsData.storage, 'storage')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    const renderSageField = (label: string, value: string | number | boolean, fieldKey: string, type: string = 'text') => (
+        <div className="group/field mb-4 last:mb-0">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.1em] block mb-1.5 group-hover/field:text-emerald-600 transition-colors">
+                {label}
+            </label>
+            {isEditing ? (
+                type === 'checkbox' ? (
+                    <label className="flex items-center gap-3 cursor-pointer px-3 py-2 bg-white rounded-xl border border-slate-200 hover:border-emerald-500 hover:ring-2 hover:ring-emerald-500/20 transition-all w-full h-[38px]">
+                        <div className="relative flex items-center">
+                            <input
+                                type="checkbox"
+                                checked={value as boolean}
+                                onChange={(e) => setSageData({ ...sageData, [fieldKey]: e.target.checked })}
+                                className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500/20"
+                            />
+                        </div>
+                        <span className="text-sm font-medium text-slate-700">{value ? 'Active' : 'Inactive'}</span>
+                        <HelpCircle size={14} className="text-slate-400 ml-auto" />
+                    </label>
+                ) : type === 'select' ? (
+                    <select
+                        value={value as string}
+                        onChange={(e) => setSageData({ ...sageData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[38px]"
+                    >
+                        <option value="ACC001">ACC001 - Main Account</option>
+                        <option value="ACC002">ACC002 - Trading Account</option>
+                        <option value="ACC003">ACC003 - Receivables</option>
+                    </select>
+                ) : type === 'country' ? (
+                    <select
+                        value={value as string}
+                        onChange={(e) => setSageData({ ...sageData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[38px]"
+                    >
+                        <option value="IE">Ireland (IE)</option>
+                        <option value="GB">United Kingdom (GB)</option>
+                        <option value="US">United States (US)</option>
+                        <option value="DE">Germany (DE)</option>
+                        <option value="FR">France (FR)</option>
+                    </select>
+                ) : type === 'number' ? (
+                    <div className="flex bg-white rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all overflow-hidden h-[38px]">
+                        <input
+                            type="number"
+                            step="0.01"
+                            value={value as number}
+                            onChange={(e) => setSageData({ ...sageData, [fieldKey]: parseFloat(e.target.value) || 0 })}
+                            className="flex-1 px-3 py-2 bg-transparent text-sm font-medium focus:outline-none"
+                        />
+                        <div className="h-full w-px bg-slate-100"></div>
+                        <select
+                            value={sageData.currency}
+                            onChange={(e) => setSageData({ ...sageData, currency: e.target.value })}
+                            className="px-2 bg-slate-50 text-xs font-bold text-slate-600 focus:outline-none hover:bg-slate-100 transition-colors cursor-pointer border-l border-slate-100"
+                        >
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="USD">USD</option>
+                        </select>
+                    </div>
+                ) : (
+                    <input
+                        type={type}
+                        value={value as string}
+                        onChange={(e) => setSageData({ ...sageData, [fieldKey]: e.target.value })}
+                        className="w-full px-3 py-2 bg-white rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all h-[38px]"
+                        placeholder={type === 'url' ? 'https://' : ''}
+                    />
+                )
+            ) : (
+                <div className="text-sm font-bold text-slate-700 break-words min-h-[1.25rem] leading-relaxed">
+                    {type === 'checkbox' ? (
+                        <div className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${value ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-400 border border-slate-100'}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full ${value ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`}></div>
+                            {value ? 'Active' : 'Inactive'}
+                        </div>
+                    ) : type === 'number' ? (
+                        <span className="text-slate-900 font-black">{sageData.currency} {Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+                    ) : type === 'country' ? (
+                        value === 'IE' ? 'Ireland (IE)' :
+                            value === 'GB' ? 'United Kingdom (GB)' :
+                                value === 'US' ? 'United States (US)' :
+                                    value === 'DE' ? 'Germany (DE)' :
+                                        value === 'FR' ? 'France (FR)' : (value as string || <span className="text-slate-300 font-medium">—</span>)
+                    ) :
+                        (value as string) || <span className="text-slate-300 font-medium">—</span>}
+                </div>
+            )}
+        </div>
+    );
+
+    const renderSageColumn = () => (
+        <div className="flex-1 min-w-[380px] group/card">
+            <div className="h-full bg-white rounded-[2.5rem] border border-slate-100 shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 transition-all duration-500 flex flex-col overflow-hidden">
+
+
+                <div className="p-6 flex flex-col flex-1">
+                    <div className="flex justify-between items-center mb-8">
+                        <div className="flex items-center gap-4">
+                            <img src="assets/Sage-logo_svg.svg.png" alt="Sage" className="h-10 w-auto object-contain" />
+                            <div>
+                                <h3 className="text-lg font-black text-slate-900 leading-tight">Sage</h3>
+                                <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Financial Data</span>
+                            </div>
+                        </div>
+                        {!isEditing && (
+                            <button
+                                onClick={() => setIsEditing(true)}
+                                className="p-2.5 bg-slate-50 hover:bg-emerald-600 text-slate-400 hover:text-white rounded-xl transition-all shadow-sm border border-slate-100"
+                            >
+                                <Edit2 size={16} />
+                            </button>
+                        )}
+                    </div>
+
+                    <div className="flex-1 space-y-4">
+                        {/* 1. Account Details */}
+                        <div className="bg-emerald-50/30 rounded-2xl p-4 border border-emerald-100/50">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-white rounded-lg shadow-sm border border-emerald-100">
+                                    <Building2 size={12} className="text-emerald-600" />
+                                </div>
+                                <span className="text-[10px] font-black text-emerald-900 uppercase tracking-widest">Account Details</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                {renderSageField('A/C *', sageData.account, 'account', 'select')}
+                                {renderSageField('Balance', sageData.balance, 'balance', 'number')}
+                            </div>
+                            {renderSageField('Company Name', sageData.companyName, 'companyName')}
+                            <div className="grid grid-cols-2 gap-4 mt-2">
+                                {renderSageField('Reg Number', sageData.companyRegNumber, 'companyRegNumber')}
+                                {renderSageField('Status', sageData.inactive, 'inactive', 'checkbox')}
+                            </div>
+                        </div>
+
+                        {/* 2. Contact Information */}
+                        <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-slate-50 rounded-lg shadow-sm border border-slate-100">
+                                    <User size={12} className="text-[#0097a7]" />
+                                </div>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Contact Information</span>
+                            </div>
+                            {renderSageField('Contact Name', sageData.contactName, 'contactName')}
+                            {renderSageField('Trade Contact', sageData.tradeContact, 'tradeContact')}
+                            <div className="grid grid-cols-2 gap-x-4 mt-2">
+                                {renderSageField('Phone 1', sageData.telephone, 'telephone', 'tel')}
+                                {renderSageField('Phone 2', sageData.telephone2, 'telephone2', 'tel')}
+                            </div>
+                        </div>
+
+                        {/* 3. Registered Address */}
+                        <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="p-1.5 bg-slate-50 rounded-lg shadow-sm border border-slate-100">
+                                    <MapPin size={12} className="text-orange-600" />
+                                </div>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Registered Address</span>
+                            </div>
+                            {renderSageField('Street 1', sageData.street1, 'street1')}
+                            <div className="grid grid-cols-2 gap-x-4">
+                                {renderSageField('Town', sageData.town, 'town')}
+                                {renderSageField('County', sageData.county, 'county')}
+                            </div>
+                        </div>
+
+                        {/* 4. Social & Email */}
+                        <div className="bg-white rounded-2xl p-4 border border-slate-100">
+                            <div className="space-y-6">
+                                {/* Email */}
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Mail size={12} className="text-purple-500" />
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Addresses</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {renderSageField('Email 1', sageData.email1, 'email1', 'email')}
+                                        {renderSageField('Email 2', sageData.email2, 'email2', 'email')}
+                                        {renderSageField('Email 3', sageData.email3, 'email3', 'email')}
+                                    </div>
+                                </div>
+
+                                <div className="h-px bg-slate-100 w-full"></div>
+
+                                {/* Social */}
+                                <div>
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <Share2 size={12} className="text-blue-500" />
+                                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Social Media</span>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {renderSageField('Twitter', sageData.twitter, 'twitter', 'url')}
+                                        {renderSageField('LinkedIn', sageData.linkedin, 'linkedin', 'url')}
+                                        {renderSageField('Facebook', sageData.facebook, 'facebook', 'url')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -242,28 +687,19 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-x-auto overflow-y-auto p-6 bg-slate-50/50">
-                        <div className="flex gap-4 min-w-max">
+                    <div className="flex-1 overflow-x-auto overflow-y-auto p-8 bg-slate-50/30">
+                        <div className="flex gap-8 min-w-max pb-4">
                             {/* Always show Deliveries Hub with Alphalake Logo */}
-                            {renderColumn('Deliveries Hub', (isEditing ? editedAddress : currentAddress) as any, true, (k, v) => setEditedAddress({ ...editedAddress, [k]: v } as Address), 'bg-white shadow-sm ring-1 ring-slate-200', ALPHALAKE_LOGO_URL)}
+                            {renderColumn('Deliveries Hub', (isEditing ? editedAddress : currentAddress) as any, true, (k, v) => setEditedAddress({ ...editedAddress, [k]: v } as Address), '#005961', ALPHALAKE_LOGO_URL)}
 
                             {/* Show McLernons if selected or ALL */}
                             {(viewMode === 'MCLERNONS' || viewMode === 'ALL') && (
-                                renderColumn('McLernons', mcLernonsData, true, (k, v) => updateExternalData('MCLERNONS', k as any, v), 'bg-[#e0f7fa]/30', 'assets/mclernons-logo.png', {
-                                    label: 'Company name',
-                                    contactName: 'Contact name',
-                                    phones: 'Telephone',
-                                    emails: 'Email 1',
-                                    line1: 'Street1',
-                                    line2: 'Street2',
-                                    city: 'Town',
-                                    eireCode: 'Post Code'
-                                })
+                                renderMcLernonsColumn()
                             )}
 
                             {/* Show Sage if selected or ALL */}
                             {(viewMode === 'SAGE' || viewMode === 'ALL') && (
-                                renderColumn('Sage', sageData, true, (k, v) => updateExternalData('SAGE', k as any, v), 'bg-[#f3f4f6]', 'assets/Sage-logo_svg.svg.png')
+                                renderSageColumn()
                             )}
                         </div>
                     </div>

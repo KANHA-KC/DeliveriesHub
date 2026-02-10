@@ -67,6 +67,10 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
     commMethods: [CommMethod.EMAIL],
     hasCustomerPortal: true, // Customer has paid for portal access
     connectedSystems: ['MCLERNONS', 'SAGE'],
+    contactName: 'Sarah Smith',
+    contactEmail: 'sarah@sunnyside.com',
+    contactPhone: '+353 1 234 5678',
+    contactAddress: '123 Care Lane, Dublin 4, D04 K7X2',
     addresses: [
       {
         id: 'A-001',
@@ -98,6 +102,10 @@ const INITIAL_CONFIGS: CustomerConfig[] = [
     requiredPOD: [PODMethod.PHOTO],
     commMethods: [CommMethod.EMAIL, CommMethod.SMS],
     connectedSystems: ['MCLERNONS'],
+    contactName: 'John Doe',
+    contactEmail: 'john.doe@meadowview.com',
+    contactPhone: '+353 87 654 3210',
+    contactAddress: '45 Health Way, Naas, W91 X2R3',
     addresses: [
       {
         id: 'A-002',

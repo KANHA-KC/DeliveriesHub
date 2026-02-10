@@ -22,11 +22,16 @@ import {
   ChevronDown,
   Lock,
   User,
-  X
+  X,
+  Phone,
+  MapPin,
+  Mail as MailIcon,
+  Contact,
+  ArrowRight
 } from 'lucide-react';
 import { POD_LABELS, COMM_LABELS, AlphalakeLogo, ALPHALAKE_LOGO_URL, CARA_LOGO_URL } from '../constants';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { motion, useDragControls } from 'framer-motion';
+import { motion, useDragControls, AnimatePresence } from 'framer-motion';
 import { UserManagementView } from './UserManagementView';
 import { AddressManagementView } from './AddressManagementView';
 import { LogoWithHoverMenu } from './LogoWithHoverMenu';
@@ -75,6 +80,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
   const [isHubSelectorOpen, setIsHubSelectorOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
+  const [viewingContact, setViewingContact] = useState<CustomerConfig | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [settingsTab, setSettingsTab] = useState<'general' | 'addresses'>('general');
@@ -191,50 +197,90 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.1em]">
-                <th className="px-8 py-5">Client Name</th>
-                <th className="px-8 py-5">Required POD Methods</th>
-                <th className="px-8 py-5">Communication</th>
-                <th className="px-8 py-5 text-right">Settings</th>
+                <th className="px-8 py-5 w-[30%]">Client Name</th>
+                <th className="px-8 py-5 w-[20%]">Contact</th>
+                <th className="px-8 py-5 w-[25%]">Required POD Methods</th>
+                <th className="px-8 py-5 w-[20%]">Communication</th>
+                <th className="px-8 py-5 text-right w-[5%]">Settings</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {configs.filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase())).map((config) => (
                 <tr key={config.id} className="hover:bg-slate-50/50 transition-colors group">
-                  <td className="px-8 py-6">
+                  <td className="px-8 py-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 border border-slate-100 group-hover:border-[#0097a7] group-hover:text-[#0097a7] transition-all">
-                        <Building2 size={24} />
+                      <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 group-hover:border-[#0097a7] group-hover:text-[#0097a7] transition-all">
+                        <Building2 size={20} />
                       </div>
                       <div>
-                        <p className="font-black text-lg text-[#005961] tracking-tight leading-tight">{config.name}</p>
+                        <p className="font-black text-base text-[#005961] tracking-tight leading-tight">{config.name}</p>
                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">ID: {config.id}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-8 py-4">
+                    <div className="flex flex-col gap-1">
+                      {config.contactName ? (
+                        <button
+                          onClick={() => setViewingContact(config)}
+                          className="font-bold text-sm text-slate-700 hover:text-[#005961] transition-colors flex items-center gap-2 text-left"
+                        >
+                          {config.contactName}
+                        </button>
+                      ) : <span className="text-slate-400 text-xs italic">No contact set</span>}
+
+                      <div className="flex items-center gap-2 mt-0.5">
+                        {config.contactEmail && (
+                          <button onClick={() => setViewingContact(config)} title={config.contactEmail} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
+                            <MailIcon size={14} />
+                          </button>
+                        )}
+                        {config.contactPhone && (
+                          <button onClick={() => setViewingContact(config)} title={config.contactPhone} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
+                            <Phone size={14} />
+                          </button>
+                        )}
+                        {config.contactAddress && (
+                          <button onClick={() => setViewingContact(config)} title={config.contactAddress} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
+                            <MapPin size={14} />
+                          </button>
+                        )}
+                        {(config.contactEmail || config.contactPhone || config.contactAddress) && (
+                          <div className="h-3 w-[1px] bg-slate-200 mx-1"></div>
+                        )}
+                        <button
+                          onClick={() => setViewingContact(config)}
+                          className="text-[10px] font-black text-[#0097a7] uppercase tracking-wider hover:underline"
+                        >
+                          VIEW
+                        </button>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-8 py-4">
                     <div className="flex flex-wrap gap-2">
                       {config.requiredPOD.map(p => (
-                        <span key={p} className="text-[10px] font-black bg-[#d9f2f2] text-[#005961] px-3 py-1 rounded-full border border-[#b8e4e4] uppercase tracking-tighter">
+                        <span key={p} className="text-[10px] font-black bg-[#d9f2f2] text-[#005961] px-2.5 py-0.5 rounded-full border border-[#b8e4e4] uppercase tracking-tighter">
                           {POD_LABELS[p]}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="px-8 py-6">
+                  <td className="px-8 py-4">
                     <div className="flex flex-wrap gap-2">
                       {config.commMethods.map(m => (
-                        <span key={m} className="flex items-center gap-1.5 text-[10px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-full border border-slate-200 uppercase tracking-tighter">
+                        <span key={m} className="flex items-center gap-1.5 text-[10px] font-black bg-slate-100 text-slate-500 px-2.5 py-0.5 rounded-full border border-slate-200 uppercase tracking-tighter">
                           {COMM_LABELS[m].icon} {COMM_LABELS[m].label}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="px-8 py-6 text-right">
+                  <td className="px-8 py-4 text-right">
                     <button
                       onClick={() => setEditingCustomerId(config.id)}
-                      className="text-slate-300 hover:text-[#005961] transition-all p-3 rounded-2xl hover:bg-white border border-transparent hover:border-slate-200 shadow-sm"
+                      className="text-slate-300 hover:text-[#005961] transition-all p-2 rounded-xl hover:bg-white border border-transparent hover:border-slate-200 shadow-sm"
                     >
-                      <Settings size={20} />
+                      <Settings size={18} />
                     </button>
                   </td>
                 </tr>
@@ -261,181 +307,126 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <p className="text-slate-400 font-medium">Fine-tune delivery rules for <span className="font-bold text-[#0097a7]">{customer.name}</span></p>
           </div>
         </div>
+      </div>
 
-        <div className="flex bg-slate-100 p-1.5 rounded-2xl">
-          <button
-            onClick={() => setSettingsTab('general')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${settingsTab === 'general' ? 'bg-white text-[#005961] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            General
-          </button>
-          <button
-            onClick={() => setSettingsTab('addresses')}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${settingsTab === 'addresses' ? 'bg-white text-[#005961] shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-          >
-            Addresses
-          </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#d9f2f2] rounded-2xl flex items-center justify-center text-[#005961]">
+              <CheckCircle size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-slate-800 tracking-tight">Required POD</h3>
+              <p className="text-xs font-medium text-slate-400">Driver mandatory verification steps</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {Object.values(PODMethod).map((method) => {
+              const isMandatory = method === 'SIGNATURE' || method === 'PHOTO';
+              const isSelected = isMandatory || customer.requiredPOD.includes(method);
+
+              return (
+                <button
+                  key={method}
+                  onClick={() => !isMandatory && toggleMethod(customer.id, method, 'requiredPOD')}
+                  disabled={isMandatory}
+                  className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${isSelected
+                    ? isMandatory
+                      ? 'bg-amber-50 border-amber-200 text-amber-800 shadow-sm cursor-not-allowed'
+                      : 'bg-[#d9f2f2] border-[#0097a7] text-[#005961] shadow-sm'
+                    : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
+                    }`}
+                >
+                  <div className="flex items-center gap-2">
+                    {isMandatory && <Lock size={16} className="text-amber-600/70" />}
+                    <span className="text-sm font-bold">{POD_LABELS[method]}</span>
+                  </div>
+                  {isSelected ? (
+                    <div className={`${isMandatory ? 'bg-amber-500' : 'bg-[#005961]'} text-white rounded-full p-1.5 shadow-md`}>
+                      {isMandatory ? <Lock size={14} strokeWidth={2.5} /> : <Check size={14} strokeWidth={4} />}
+                    </div>
+                  ) : (
+                    <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#0097a7]">
+              <Bell size={24} />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-slate-800 tracking-tight">Alert Channels</h3>
+              <p className="text-xs font-medium text-slate-400">Order milestone automated notifications</p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {Object.values(CommMethod).map((method) => (
+              <button
+                key={method}
+                onClick={() => toggleMethod(customer.id, method, 'commMethods')}
+                className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${customer.commMethods.includes(method)
+                  ? 'bg-[#d9f2f2] border-[#0097a7] text-[#005961] shadow-sm'
+                  : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
+                  }`}
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`p-2 rounded-xl ${customer.commMethods.includes(method) ? 'bg-[#005961] text-white' : 'bg-slate-200 text-slate-400'}`}>
+                    {COMM_LABELS[method].icon}
+                  </div>
+                  <span className="text-sm font-bold">{COMM_LABELS[method].label}</span>
+                </div>
+                {customer.commMethods.includes(method) ? (
+                  <div className="bg-[#005961] text-white rounded-full p-1.5 shadow-md"><Check size={14} strokeWidth={4} /></div>
+                ) : (
+                  <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {settingsTab === 'general' ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-[#d9f2f2] rounded-2xl flex items-center justify-center text-[#005961]">
-                  <CheckCircle size={24} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Required POD</h3>
-                  <p className="text-xs font-medium text-slate-400">Driver mandatory verification steps</p>
-                </div>
-              </div>
+      <div className="flex justify-end">
+        <button
+          onClick={() => { setEditingCustomerId(null); }}
+          className="bg-[#005961] text-white px-12 py-4 rounded-[1.5rem] font-black text-lg shadow-xl shadow-[#005961]/20 active:scale-95 transition-all"
+        >
+          Confirm Settings
+        </button>
+      </div>
+    </div>
+  );
 
-              <div className="space-y-3">
-                {Object.values(PODMethod).map((method) => {
-                  const isMandatory = method === 'SIGNATURE' || method === 'PHOTO';
-                  const isSelected = isMandatory || customer.requiredPOD.includes(method);
-
-                  return (
-                    <button
-                      key={method}
-                      onClick={() => !isMandatory && toggleMethod(customer.id, method, 'requiredPOD')}
-                      disabled={isMandatory}
-                      className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${isSelected
-                        ? isMandatory
-                          ? 'bg-amber-50 border-amber-200 text-amber-800 shadow-sm cursor-not-allowed'
-                          : 'bg-[#d9f2f2] border-[#0097a7] text-[#005961] shadow-sm'
-                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
-                        }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        {isMandatory && <Lock size={16} className="text-amber-600/70" />}
-                        <span className="text-sm font-bold">{POD_LABELS[method]}</span>
-                      </div>
-                      {isSelected ? (
-                        <div className={`${isMandatory ? 'bg-amber-500' : 'bg-[#005961]'} text-white rounded-full p-1.5 shadow-md`}>
-                          {isMandatory ? <Lock size={14} strokeWidth={2.5} /> : <Check size={14} strokeWidth={4} />}
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-[#0097a7]">
-                  <Bell size={24} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Alert Channels</h3>
-                  <p className="text-xs font-medium text-slate-400">Order milestone automated notifications</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {Object.values(CommMethod).map((method) => (
-                  <button
-                    key={method}
-                    onClick={() => toggleMethod(customer.id, method, 'commMethods')}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl border transition-all ${customer.commMethods.includes(method)
-                      ? 'bg-[#d9f2f2] border-[#0097a7] text-[#005961] shadow-sm'
-                      : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
-                      }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className={`p-2 rounded-xl ${customer.commMethods.includes(method) ? 'bg-[#005961] text-white' : 'bg-slate-200 text-slate-400'}`}>
-                        {COMM_LABELS[method].icon}
-                      </div>
-                      <span className="text-sm font-bold">{COMM_LABELS[method].label}</span>
-                    </div>
-                    {customer.commMethods.includes(method) ? (
-                      <div className="bg-[#005961] text-white rounded-full p-1.5 shadow-md"><Check size={14} strokeWidth={4} /></div>
-                    ) : (
-                      <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Connected Systems */}
-            <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-5 md:col-span-2">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-                  <LayoutDashboard size={24} />
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Addresses and Contacts</h3>
-                  <p className="text-xs font-medium text-slate-400">Choose which additional systems to show in Addresses & Contacts</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {['MCLERNONS', 'SAGE'].map((system) => {
-                  const isConnected = customer.connectedSystems?.includes(system);
-                  return (
-                    <button
-                      key={system}
-                      onClick={() => {
-                        const current = customer.connectedSystems || [];
-                        const newSystems = isConnected
-                          ? current.filter(s => s !== system)
-                          : [...current, system];
-                        onUpdateConfig({ ...customer, connectedSystems: newSystems });
-                      }}
-                      className={`flex items-center justify-between p-3 rounded-2xl border-2 transition-all ${isConnected
-                        ? 'bg-[#eef2ff] border-[#c7d2fe] text-indigo-900 shadow-sm'
-                        : 'bg-slate-50 border-slate-100 text-slate-400 hover:border-slate-200 hover:bg-white'
-                        }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="bg-white p-1.5 rounded-xl border border-slate-100 shadow-sm flex items-center justify-center w-14 h-10 shrink-0">
-                          <img
-                            src={system === 'MCLERNONS' ? 'assets/mclernons-logo.png' : 'assets/Sage-logo_svg.svg.png'}
-                            alt={system === 'MCLERNONS' ? 'McLernons' : 'Sage'}
-                            className="max-h-full max-w-full object-contain"
-                          />
-                        </div>
-                        <span className="font-black text-sm tracking-tight">{system === 'MCLERNONS' ? 'McLernons' : 'Sage'}</span>
-                      </div>
-                      {isConnected ? (
-                        <div className="bg-indigo-600 text-white rounded-full p-1.5 shadow-md flex items-center justify-center">
-                          <Check size={14} strokeWidth={4} />
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-slate-200" />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+  const renderAddressManagement = (customer: CustomerConfig) => (
+    <div className="animate-in slide-in-from-bottom-4 duration-500 max-w-7xl w-full">
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setViewingContact(null)}
+            className="p-3 bg-white hover:bg-slate-50 rounded-2xl border border-slate-200 text-slate-400 hover:text-[#005961] transition-all shadow-sm"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <div>
+            <h2 className="text-3xl font-black text-[#005961] tracking-tight">Addresses & Contacts</h2>
+            <p className="text-slate-400 font-medium">Manage authorized drop-off locations for <span className="font-bold text-[#0097a7]">{customer.name}</span></p>
           </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={() => { setEditingCustomerId(null); }}
-              className="bg-[#005961] text-white px-12 py-4 rounded-[1.5rem] font-black text-lg shadow-xl shadow-[#005961]/20 active:scale-95 transition-all"
-            >
-              Confirm Settings
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="h-[600px] bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden p-6">
-          <AddressManagementView
-            customer={customer}
-            onUpdate={onUpdateConfig}
-            currentUser="System Admin"
-            postalCodeLabel={postalCodeLabel}
-          />
         </div>
-      )}
+      </div>
+
+      <AddressManagementView
+        customer={customer}
+        onUpdate={onUpdateConfig}
+        currentUser="System Admin"
+        postalCodeLabel={postalCodeLabel}
+      />
     </div>
   );
 
@@ -454,7 +445,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <div
               className="h-8 flex items-center cursor-pointer hover:opacity-80 transition-opacity"
               onClick={() => {
-                setOrgSettingsInitialTab('connectors');
+                setOrgSettingsInitialTab('general');
                 setActiveTab('org-settings');
                 setEditingCustomerId(null);
               }}
@@ -464,7 +455,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <div className="h-8 w-[1px] bg-gray-500 mx-2" />
             <div className="flex flex-col justify-center">
               <span className="font-semibold text-md leading-tight text-white">Pharmacy Cloud</span>
-              <span className="text-sm text-gray-300 font-normal">Deliveries Hub</span>
+              <span className="text-sm text-gray-300 font-normal">
+                {activeTab === 'org-settings' ? 'Admin Console' : 'Deliveries Hub'}
+              </span>
             </div>
           </div>
         </div>
@@ -501,7 +494,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                   <div className="px-4 py-3 border-b border-slate-50 mb-2">
                     <p className="text-sm font-black text-slate-800">Sarah Connor</p>
                     <p className="text-xs text-slate-500 font-medium mt-0.5">sarah.connor@alphalake.ai</p>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Office User</p>
+                    <div className="flex flex-col gap-1.5 mt-2">
+                      <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#e0f7fa] border border-[#b2ebf2] text-[#006064] text-[10px] font-bold tracking-wide w-fit">
+                        OFFICE USER <span className="font-medium opacity-80 ml-1">(Deliveries Hub)</span>
+                      </div>
+                      <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#fff8e1] border border-[#ffecb3] text-[#ff6f00] text-[10px] font-bold tracking-wide w-fit">
+                        FINANCE MGR <span className="font-medium opacity-80 ml-1">(Invoice Hub)</span>
+                      </div>
+                      <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-400 text-[10px] font-bold tracking-wide w-fit">
+                        Inpatient Hub <span className="font-medium opacity-80 ml-1">(No Access)</span>
+                      </div>
+                    </div>
                   </div>
 
                   <button
@@ -515,6 +518,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                     className="w-full text-left px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-[#005961] flex items-center gap-3 transition-colors"
                   >
                     <Users size={16} /> User Management
+                  </button>
+                  <button
+                    onClick={() => {
+                      setOrgSettingsInitialTab('printing');
+                      setActiveTab('hub-settings');
+                      setIsProfileMenuOpen(false);
+                      setEditingCustomerId(null);
+                    }}
+                    className="w-full text-left px-4 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 hover:text-[#005961] flex items-center gap-3 transition-colors"
+                  >
+                    <Building2 size={16} /> Hub settings
                   </button>
                   <button
                     onClick={() => setIsProfileMenuOpen(false)}
@@ -565,6 +579,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
         onClose={() => setIsHubSelectorOpen(false)}
         onOpenOrgSettings={() => {
           setIsHubSelectorOpen(false);
+          setOrgSettingsInitialTab('general');
           setActiveTab('org-settings');
           setEditingCustomerId(null);
         }}
@@ -630,6 +645,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
         </div>
       )}
 
+
+
       <div className="flex flex-1 overflow-hidden">
         <aside
           className={`bg-[#001a1d] text-white flex flex-col h-full z-40 transition-all duration-300 shrink-0 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}
@@ -642,8 +659,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
               <LayoutDashboard size={20} className="shrink-0" /> {!isSidebarCollapsed && <span>Dashboard</span>}
             </button>
             <button
-              onClick={() => { setActiveTab('customers'); setEditingCustomerId(null); }}
-              className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-black transition-all ${activeTab === 'customers' || editingCustomerId ? 'bg-[#005961] text-white shadow-xl shadow-[#005961]/20' : 'text-slate-500 hover:text-white hover:bg-[#002f33]'}`}
+              onClick={() => { setActiveTab('customers'); setEditingCustomerId(null); setViewingContact(null); }}
+              className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-sm font-black transition-all ${activeTab === 'customers' || editingCustomerId || viewingContact ? 'bg-[#005961] text-white shadow-xl shadow-[#005961]/20' : 'text-slate-500 hover:text-white hover:bg-[#002f33]'}`}
             >
               <Users size={20} className="shrink-0" /> {!isSidebarCollapsed && <span>Customers</span>}
             </button>
@@ -674,6 +691,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                   <span className="text-[#0097a7] text-[10px] font-black uppercase tracking-[0.2em]">{activeCustomer?.name}</span>
                 </>
               )}
+              {viewingContact && (
+                <>
+                  <ChevronRight size={14} className="text-slate-200" />
+                  <span className="text-[#0097a7] text-[10px] font-black uppercase tracking-[0.2em]">{viewingContact.name}</span>
+                </>
+              )}
             </div>
           </div>
 
@@ -682,6 +705,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
               <UserManagementView />
             ) : activeTab === 'deliveries' ? (
               <OfficeDeliveriesView orders={orders} configs={configs} />
+            ) : viewingContact ? (
+              renderAddressManagement(viewingContact)
             ) : editingCustomerId && activeCustomer ? (
               renderSettings(activeCustomer)
             ) : activeTab === 'org-settings' ? (
@@ -690,6 +715,15 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                 onUpdatePostalCodeLabel={onUpdatePostalCodeLabel}
                 onBack={() => setActiveTab('dashboard')}
                 initialTab={orgSettingsInitialTab}
+                viewMode="ORG"
+              />
+            ) : activeTab === 'hub-settings' ? (
+              <OrgSettingsView
+                postalCodeLabel={postalCodeLabel}
+                onUpdatePostalCodeLabel={onUpdatePostalCodeLabel}
+                onBack={() => setActiveTab('dashboard')}
+                initialTab={orgSettingsInitialTab}
+                viewMode="HUB"
               />
             ) : (
               renderDashboard()
