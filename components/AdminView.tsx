@@ -212,10 +212,10 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                       <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300 border border-slate-100 group-hover:border-[#0097a7] group-hover:text-[#0097a7] transition-all">
                         <Building2 size={20} />
                       </div>
-                      <div>
-                        <p className="font-black text-base text-[#005961] tracking-tight leading-tight">{config.name}</p>
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">ID: {config.id}</p>
-                      </div>
+                      <button onClick={() => setViewingContact(config)} className="text-left group/name">
+                        <p className="font-black text-base text-[#005961] tracking-tight leading-tight group-hover/name:text-[#0097a7] transition-colors">{config.name}</p>
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{config.contactAddress || 'No address set'}</p>
+                      </button>
                     </div>
                   </td>
                   <td className="px-8 py-4">
@@ -229,31 +229,19 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                         </button>
                       ) : <span className="text-slate-400 text-xs italic">No contact set</span>}
 
-                      <div className="flex items-center gap-2 mt-0.5">
+                      <div className="flex flex-col gap-1 mt-1">
                         {config.contactEmail && (
-                          <button onClick={() => setViewingContact(config)} title={config.contactEmail} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
-                            <MailIcon size={14} />
-                          </button>
+                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium group-hover:text-slate-600 transition-colors" title={config.contactEmail}>
+                            <MailIcon size={14} className="shrink-0 text-slate-300 group-hover:text-[#0097a7] transition-colors" />
+                            <span className="truncate max-w-[180px]">{config.contactEmail}</span>
+                          </div>
                         )}
                         {config.contactPhone && (
-                          <button onClick={() => setViewingContact(config)} title={config.contactPhone} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
-                            <Phone size={14} />
-                          </button>
+                          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium group-hover:text-slate-600 transition-colors" title={config.contactPhone}>
+                            <Phone size={14} className="shrink-0 text-slate-300 group-hover:text-[#0097a7] transition-colors" />
+                            <span className="truncate max-w-[180px]">{config.contactPhone}</span>
+                          </div>
                         )}
-                        {config.contactAddress && (
-                          <button onClick={() => setViewingContact(config)} title={config.contactAddress} className="text-slate-400 hover:text-[#0097a7] transition-colors p-1 hover:bg-slate-100 rounded-md">
-                            <MapPin size={14} />
-                          </button>
-                        )}
-                        {(config.contactEmail || config.contactPhone || config.contactAddress) && (
-                          <div className="h-3 w-[1px] bg-slate-200 mx-1"></div>
-                        )}
-                        <button
-                          onClick={() => setViewingContact(config)}
-                          className="text-[10px] font-black text-[#0097a7] uppercase tracking-wider hover:underline"
-                        >
-                          VIEW
-                        </button>
                       </div>
                     </div>
                   </td>
@@ -501,9 +489,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                       <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#fff8e1] border border-[#ffecb3] text-[#ff6f00] text-[10px] font-bold tracking-wide w-fit">
                         FINANCE MGR <span className="font-medium opacity-80 ml-1">(Invoice Hub)</span>
                       </div>
-                      <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 text-slate-400 text-[10px] font-bold tracking-wide w-fit">
-                        Inpatient Hub <span className="font-medium opacity-80 ml-1">(No Access)</span>
-                      </div>
+
                     </div>
                   </div>
 

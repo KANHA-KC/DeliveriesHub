@@ -696,12 +696,12 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                         <div
                             key={idx}
                             onClick={() => handleOpenDetail(connector)}
-                            className="p-6 rounded-3xl border border-slate-100 hover:shadow-lg hover:border-[#0097a7]/30 transition-all group flex flex-col justify-between h-[220px] cursor-pointer bg-white"
+                            className="p-6 rounded-3xl border border-slate-100 hover:shadow-lg hover:border-[#0097a7]/30 transition-all group flex flex-col justify-between h-[280px] cursor-pointer bg-white"
                         >
                             <div> {/* This div wraps the logo/status and text content */}
                                 <div className="flex justify-between items-start mb-4">
                                     {/* Fixed 80x80px logo container with faint grey fill */}
-                                    <div className="w-[50px] h-[50px] bg-slate-50 rounded-xl flex items-center justify-center shrink-0 p-1">
+                                    <div className="w-[65px] h-[65px] bg-slate-50 rounded-xl flex items-center justify-center shrink-0 p-1">
                                         <img
                                             src={connector.logo}
                                             alt={connector.name}
@@ -779,10 +779,10 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                             tags: ['Security', 'IAM', 'Enterprise']
                         }
                     ].map((connector, idx) => (
-                        <div key={`extra-${idx}`} className="p-6 rounded-3xl border border-slate-100 bg-white relative group overflow-hidden h-[220px] flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                        <div key={`extra-${idx}`} className="p-6 rounded-3xl border border-slate-100 bg-white relative group overflow-hidden h-[280px] flex flex-col justify-between hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                             <div>
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="w-[50px] h-[50px] bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 p-1">
+                                    <div className="w-[65px] h-[65px] bg-slate-50 rounded-2xl flex items-center justify-center shrink-0 p-1">
                                         <img
                                             src={connector.logo}
                                             alt={connector.name}
@@ -1102,7 +1102,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                         <p className="text-slate-400 font-medium">
                             {viewMode === 'ORG'
                                 ? 'Manage user settings, integrations and Org wise configurations'
-                                : 'Manage hub-specific configurations for printing and notifications'
+                                : 'Manage hub-specific configurations for Deliveries Hub.'
                             }
                         </p>
                     </div>

@@ -57,7 +57,7 @@ interface McLernonsExtendedData {
     storage: string;
 }
 
-export type MasterDataViewMode = 'MCLERNONS' | 'SAGE' | 'ALL';
+export type MasterDataViewMode = 'MCLERNONS' | 'SAGE' | 'DELIVERIES_HUB' | 'ALL';
 
 interface MasterDataComparisonModalProps {
     isOpen: boolean;
@@ -689,8 +689,8 @@ export const MasterDataComparisonModal: React.FC<MasterDataComparisonModalProps>
                     {/* Content */}
                     <div className="flex-1 overflow-x-auto overflow-y-auto p-8 bg-slate-50/30">
                         <div className="flex gap-8 min-w-max pb-4">
-                            {/* Always show Deliveries Hub with Alphalake Logo */}
-                            {renderColumn('Deliveries Hub', (isEditing ? editedAddress : currentAddress) as any, true, (k, v) => setEditedAddress({ ...editedAddress, [k]: v } as Address), '#005961', ALPHALAKE_LOGO_URL)}
+                            {/* Show Deliveries Hub in Comparison Mode (ALL) or when specifically selected */}
+                            {(viewMode === 'DELIVERIES_HUB' || viewMode === 'ALL') && renderColumn('Deliveries Hub', (isEditing ? editedAddress : currentAddress) as any, true, (k, v) => setEditedAddress({ ...editedAddress, [k]: v } as Address), '#005961', ALPHALAKE_LOGO_URL)}
 
                             {/* Show McLernons if selected or ALL */}
                             {(viewMode === 'MCLERNONS' || viewMode === 'ALL') && (

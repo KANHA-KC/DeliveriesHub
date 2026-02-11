@@ -352,8 +352,11 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                 className="bg-white rounded-2xl border border-slate-200 shadow-sm group hover:border-[#0097a7]/30 hover:shadow-md transition-all relative overflow-hidden"
                             >
                                 {/* Row 1: Deliveries Hub (Primary) */}
-                                <div className="px-6 py-4 flex items-center gap-4">
-                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 bg-slate-50 rounded-xl">
+                                <div
+                                    onClick={() => openMasterData(address, 'DELIVERIES_HUB')}
+                                    className="px-6 py-4 flex items-center gap-4 bg-slate-50/30 hover:bg-slate-50 hover:pl-7 transition-all cursor-pointer group/row"
+                                >
+                                    <div className="w-28 h-28 flex items-center justify-center shrink-0 bg-slate-50 rounded-xl group-hover/row:scale-110 transition-transform">
                                         <img
                                             src="assets/AL Non white all.png"
                                             alt="Alphalake AI"
@@ -372,22 +375,10 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                                 <span className="text-[10px] font-bold text-[#0097a7] uppercase tracking-widest">Primary System</span>
                                             </div>
 
-                                            {/* Top Right Actions */}
-                                            <div className="flex items-center gap-1">
-                                                <button
-                                                    onClick={() => handleEdit(address)}
-                                                    className="p-1.5 text-slate-400 hover:text-[#005961] hover:bg-slate-50 rounded-lg transition-all"
-                                                    title="Edit Address"
-                                                >
-                                                    <Edit2 size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(address.id)}
-                                                    className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
-                                                    title="Delete Address"
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                            {/* Top Right - View Details appears on hover */}
+                                            <div className="flex items-center gap-2 opacity-0 group-hover/row:opacity-100 transition-opacity">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase">View Details</span>
+                                                <ArrowRight size={14} className="text-[#0097a7]" />
                                             </div>
                                         </div>
                                         <div className="flex flex-col gap-0.5 mt-2">
@@ -406,7 +397,7 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                     onClick={() => openMasterData(address, 'MCLERNONS')}
                                     className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:pl-7 transition-all cursor-pointer group/row flex items-center gap-4"
                                 >
-                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
+                                    <div className="w-28 h-28 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
                                         <img src="assets/mclernons-logo.png" alt="McLernons" className="w-full h-full object-contain" />
                                     </div>
                                     <div className="flex-1 min-w-0 pr-4">
@@ -436,7 +427,7 @@ export const AddressManagementView: React.FC<AddressManagementViewProps> = ({
                                     onClick={() => openMasterData(address, 'SAGE')}
                                     className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 hover:bg-slate-50 hover:pl-7 transition-all cursor-pointer group/row flex items-center gap-4"
                                 >
-                                    <div className="w-20 h-20 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
+                                    <div className="w-28 h-28 flex items-center justify-center shrink-0 group-hover/row:scale-110 transition-transform bg-slate-50 rounded-xl">
                                         <img src="assets/Sage-logo_svg.svg.png" alt="Sage" className="w-full h-full object-contain" />
                                     </div>
                                     <div className="flex-1 min-w-0 pr-4">

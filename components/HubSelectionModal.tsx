@@ -60,28 +60,28 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Hub Option Card 1 */}
                             <div
-                                className="cursor-not-allowed bg-white-50 p-6 rounded-2xl shadow-none border border-gray-100 h-full min-h-[220px] flex flex-col justify-between opacity-70"
+                                onClick={() => window.location.href = 'https://app.alphalake.ai/pharmacy/inpatient-hub'}
+                                className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[220px] flex flex-col justify-between"
                             >
                                 <div>
-                                    <div className="w-14 h-14 bg-white-100 rounded-2xl flex items-center justify-center text-slate-400 mb-6">
+                                    <div className="w-14 h-14 bg-[#E0F2F1] rounded-2xl flex items-center justify-center text-[#003B46] mb-6 group-hover:scale-110 transition-transform duration-300">
                                         <RefreshCw size={24} />
                                     </div>
-                                    <h3 className="font-bold text-xl text-slate-400">Inpatient Hub</h3>
-                                    <p className="text-sm text-slate-400 mt-2 leading-relaxed">Manage patient prescriptions and dispensing workflows.</p>
+                                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#003B46]">Inpatient Hub</h3>
+                                    <p className="text-sm text-gray-500 mt-2 leading-relaxed">Manage patient prescriptions and dispensing workflows.</p>
                                 </div>
                             </div>
 
                             {/* Hub Option Card 2: Invoice Hub */}
                             <div
-                                onClick={onClose}
-                                className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[220px] flex flex-col justify-between"
+                                className="cursor-not-allowed bg-slate-50 p-6 rounded-2xl shadow-none border border-gray-100 h-full min-h-[220px] flex flex-col justify-between opacity-70"
                             >
                                 <div>
-                                    <div className="w-14 h-14 bg-[#E0F2F1] rounded-2xl flex items-center justify-center text-[#003B46] mb-6 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 mb-6">
                                         <FileText size={24} />
                                     </div>
-                                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#003B46]">Invoice Hub</h3>
-                                    <p className="text-sm text-gray-500 mt-2 leading-relaxed">Manage billing, invoices, and payments.</p>
+                                    <h3 className="font-bold text-xl text-slate-400">Invoice Hub</h3>
+                                    <p className="text-sm text-slate-400 mt-2 leading-relaxed">Manage billing, invoices, and payments.</p>
                                 </div>
                             </div>
 
