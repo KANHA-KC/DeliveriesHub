@@ -111,3 +111,5 @@ export interface User {
   role: UserRole;
   organization: string;
 }
+
+export type ViewState = 'HOME' | 'DETAILS' | 'NOTIFICATIONS' | 'PREFERENCES' | 'ADDRESSES' | 'HISTORY';

@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { UserRole, Order, OrderStatus, CustomerConfig, PODMethod, CommMethod } from './types';
+import { UserRole, Order, OrderStatus, CustomerConfig, PODMethod, CommMethod, ViewState } from './types';
 import { RoleSelector } from './components/RoleSelector';
 import { DriverView } from './components/DriverView';
 import { RecipientView } from './components/RecipientView';
@@ -127,7 +126,12 @@ const App: React.FC = () => {
   const [currentRole, setCurrentRole] = useState<UserRole>(UserRole.ADMIN);
   const [orders, setOrders] = useState<Order[]>(INITIAL_ORDERS);
   const [configs, setConfigs] = useState<CustomerConfig[]>(INITIAL_CONFIGS);
-  const [isDesktopCustomerView, setIsDesktopCustomerView] = useState(false);
+  const [customerViewState, setCustomerViewState] = useState<{
+    isActive: boolean;
+    customerId?: string;
+    initialView?: ViewState;
+    restricted?: boolean;
+  }>({ isActive: false });
   const [postalCodeLabel, setPostalCodeLabel] = useState<import('./types').PostalCodeLabel>('Post Code');
 
   const handleCompleteDelivery = (orderId: string) => {
@@ -150,7 +154,7 @@ const App: React.FC = () => {
   const configMap = configs.reduce((acc, c) => ({ ...acc, [c.id]: c }), {} as Record<string, CustomerConfig>);
 
   // Admin view - no frame
-  if (currentRole === UserRole.ADMIN && !isDesktopCustomerView) {
+  if (currentRole === UserRole.ADMIN && !customerViewState.isActive) {
     return (
       <div className="relative h-screen w-screen overflow-hidden">
         <div className="h-full w-full overflow-hidden flex flex-col bg-slate-50">
@@ -158,7 +162,16 @@ const App: React.FC = () => {
             configs={configs}
             orders={orders}
             onUpdateConfig={handleUpdateConfig}
-            onSwitchToCustomerView={() => setIsDesktopCustomerView(true)}
+            onSwitchToCustomerView={(customerName, initialView, restricted) => {
+              // Try to find by id or name
+              const config = configs.find(c => c.id === customerName || c.name === customerName);
+              setCustomerViewState({
+                isActive: true,
+                customerId: config?.id || customerName,
+                initialView,
+                restricted
+              });
+            }}
             postalCodeLabel={postalCodeLabel}
             onUpdatePostalCodeLabel={setPostalCodeLabel}
           />
@@ -171,17 +184,21 @@ const App: React.FC = () => {
   }
 
   // Desktop Customer View - triggered from Admin panel
-  if (isDesktopCustomerView) {
+  if (customerViewState.isActive) {
+    const activeCustomerConfig = configs.find(c => c.id === customerViewState.customerId) || configs[0];
+
     return (
       <div className="relative h-screen w-screen overflow-hidden">
         <RecipientViewDesktop
           orders={orders}
-          customerConfig={configs[0]}
+          customerConfig={activeCustomerConfig}
           onUpdateConfig={handleUpdateConfig}
+          initialView={customerViewState.initialView}
+          restrictedView={customerViewState.restricted}
         />
         <div className="fixed bottom-8 right-8 z-[100] shadow-2xl rounded-full">
           <button
-            onClick={() => setIsDesktopCustomerView(false)}
+            onClick={() => setCustomerViewState({ isActive: false })}
             className="bg-white text-[#005961] px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
           >
             ← Back to Admin

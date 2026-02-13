@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Order, OrderStatus, CustomerConfig } from '../types';
+import { Order, OrderStatus, CustomerConfig, ViewState } from '../types';
 import { STATUS_METADATA } from '../constants';
 import { MapPin, Bell, Package, Calendar, Search, ExternalLink, Settings, CheckCircle, Clock, Info, ArrowRight, FileText, Truck, AlertCircle, ShoppingBag, Home, History, X, User, Menu } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,9 +9,9 @@ interface RecipientViewDesktopProps {
     orders: Order[];
     customerConfig: CustomerConfig;
     onUpdateConfig: (config: CustomerConfig) => void;
+    initialView?: ViewState;
+    restrictedView?: boolean;
 }
-
-type ViewState = 'HOME' | 'DETAILS' | 'NOTIFICATIONS' | 'PREFERENCES' | 'ADDRESSES' | 'HISTORY';
 
 interface Notification {
     id: string;
@@ -57,8 +57,22 @@ const DUMMY_NOTIFICATIONS: Notification[] = [
     }
 ];
 
-export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orders, customerConfig, onUpdateConfig }) => {
-    const [view, setView] = useState<ViewState>('HOME');
+interface RecipientViewDesktopProps {
+    orders: Order[];
+    customerConfig: CustomerConfig;
+    onUpdateConfig: (config: CustomerConfig) => void;
+    initialView?: ViewState;
+    restrictedView?: boolean;
+}
+
+export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({
+    orders,
+    customerConfig,
+    onUpdateConfig,
+    initialView = 'HOME',
+    restrictedView = false
+}) => {
+    const [view, setView] = useState<ViewState>(initialView);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [preferences, setPreferences] = useState({
@@ -164,9 +178,9 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                     {/* Navigation Menu */}
                     <nav className="flex-1 p-4 space-y-2 overflow-y-auto overflow-x-hidden">
                         <button
+                            disabled={restrictedView && view !== 'HOME'}
                             onClick={() => setView('HOME')}
-                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HOME' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HOME' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'} ${restrictedView && view !== 'HOME' ? 'opacity-30 cursor-not-allowed' : ''}`}
                             title="My Orders"
                         >
                             <Home size={24} className="shrink-0 transition-all duration-300" />
@@ -176,9 +190,9 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                         </button>
 
                         <button
+                            disabled={restrictedView && view !== 'NOTIFICATIONS'}
                             onClick={() => setView('NOTIFICATIONS')}
-                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out relative ${view === 'NOTIFICATIONS' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out relative ${view === 'NOTIFICATIONS' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'} ${restrictedView && view !== 'NOTIFICATIONS' ? 'opacity-30 cursor-not-allowed' : ''}`}
                             title="Notifications"
                         >
                             <Bell size={24} className="shrink-0 transition-all duration-300" />
@@ -189,9 +203,9 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                         </button>
 
                         <button
+                            disabled={restrictedView && view !== 'ADDRESSES'}
                             onClick={() => setView('ADDRESSES')}
-                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'ADDRESSES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'ADDRESSES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'} ${restrictedView && view !== 'ADDRESSES' ? 'opacity-30 cursor-not-allowed' : ''}`}
                             title="My Addresses"
                         >
                             <MapPin size={24} className="shrink-0 transition-all duration-300" />
@@ -201,9 +215,9 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                         </button>
 
                         <button
+                            disabled={restrictedView && view !== 'PREFERENCES'}
                             onClick={() => setView('PREFERENCES')}
-                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'PREFERENCES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'PREFERENCES' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'} ${restrictedView && view !== 'PREFERENCES' ? 'opacity-30 cursor-not-allowed' : ''}`}
                             title="Preferences"
                         >
                             <Settings size={24} className="shrink-0 transition-all duration-300" />
@@ -213,9 +227,9 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                         </button>
 
                         <button
+                            disabled={restrictedView && view !== 'HISTORY'}
                             onClick={() => setView('HISTORY')}
-                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HISTORY' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'
-                                }`}
+                            className={`w-full flex items-center justify-start px-3 py-3 rounded-xl transition-all duration-300 ease-in-out ${view === 'HISTORY' ? 'bg-[#005961] text-white shadow-lg shadow-[#005961]/20' : 'text-slate-600 hover:bg-slate-50'} ${restrictedView && view !== 'HISTORY' ? 'opacity-30 cursor-not-allowed' : ''}`}
                             title="History"
                         >
                             <History size={24} className="shrink-0 transition-all duration-300" />
@@ -548,6 +562,7 @@ export const RecipientViewDesktop: React.FC<RecipientViewDesktopProps> = ({ orde
                                             customer={customerConfig}
                                             onUpdate={onUpdateConfig}
                                             currentUser="Client User"
+                                            isCustomerView={true}
                                         />
                                     </div>
                                 </div>

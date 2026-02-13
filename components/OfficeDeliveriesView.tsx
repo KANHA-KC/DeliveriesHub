@@ -1,15 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { Order, OrderStatus, CustomerConfig } from '../types';
 import { STATUS_METADATA } from '../constants';
-import { MapPin, Search, Package, Calendar, ArrowRight, Truck, CheckCircle, ExternalLink, Filter, X, ChevronLeft } from 'lucide-react';
+import { MapPin, Search, Package, Calendar, ArrowRight, Truck, CheckCircle, ExternalLink, Filter, X, ChevronLeft, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface OfficeDeliveriesViewProps {
     orders: Order[];
     configs: CustomerConfig[];
+    onViewAsCustomer?: (customerId?: string | null) => void;
 }
 
-export const OfficeDeliveriesView: React.FC<OfficeDeliveriesViewProps> = ({ orders, configs }) => {
+export const OfficeDeliveriesView: React.FC<OfficeDeliveriesViewProps> = ({ orders, configs, onViewAsCustomer }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -63,6 +64,15 @@ export const OfficeDeliveriesView: React.FC<OfficeDeliveriesViewProps> = ({ orde
                                         <h2 className="text-3xl font-black text-[#005961] mb-2 tracking-tight">Active Deliveries</h2>
                                         <p className="text-slate-400 font-medium">Track and manage orders across all customer accounts.</p>
                                     </div>
+                                    {onViewAsCustomer && (
+                                        <button
+                                            onClick={() => onViewAsCustomer(selectedCustomer)}
+                                            className="hidden md:flex items-center gap-2 px-4 py-2 bg-[#E0F2F1] text-[#005961] rounded-xl font-bold text-sm hover:bg-[#B2DFDB] transition-colors border border-[#80CBC4] shadow-sm ml-auto"
+                                        >
+                                            <User size={18} />
+                                            View as Customer
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center gap-4">
@@ -155,8 +165,8 @@ export const OfficeDeliveriesView: React.FC<OfficeDeliveriesViewProps> = ({ orde
                                                 <div className="flex items-center justify-between pt-4 border-t border-slate-100 relative z-10">
                                                     <div className="flex items-center gap-2">
                                                         <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-wide border ${order.status === OrderStatus.DELIVERED
-                                                                ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                                                                : 'bg-[#d9f2f2] text-[#005961] border-[#b8e4e4]'
+                                                            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                                            : 'bg-[#d9f2f2] text-[#005961] border-[#b8e4e4]'
                                                             }`}>
                                                             {order.status.replace(/_/g, ' ')}
                                                         </span>
@@ -218,8 +228,8 @@ export const OfficeDeliveriesView: React.FC<OfficeDeliveriesViewProps> = ({ orde
                                             <div className="flex items-center gap-3 mb-1">
                                                 <h2 className="text-2xl font-black text-[#005961] tracking-tight">Order #{activeOrder?.id}</h2>
                                                 <span className={`text-[10px] px-2.5 py-1 rounded-full font-black uppercase tracking-wide border ${activeOrder?.status === OrderStatus.DELIVERED
-                                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-                                                        : 'bg-[#d9f2f2] text-[#005961] border-[#b8e4e4]'
+                                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                                                    : 'bg-[#d9f2f2] text-[#005961] border-[#b8e4e4]'
                                                     }`}>
                                                     {activeOrder?.status.replace(/_/g, ' ')}
                                                 </span>

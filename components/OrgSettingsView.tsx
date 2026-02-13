@@ -800,12 +800,12 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                                 <div className="w-12 h-12 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 mb-3 shadow-sm scale-0 group-hover:scale-100 transition-transform duration-300 delay-100">
                                     <AlertCircle size={24} />
                                 </div>
-                                <h5 className="font-black text-slate-800 mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">Not Available Yet</h5>
+                                <h5 className="font-black text-slate-800 mb-1 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">API available</h5>
                                 <button
                                     onClick={() => handleRequestAccess(connector)}
                                     className="mt-3 bg-[#005961] text-white px-5 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:shadow-xl hover:bg-[#004a50] transition-all transform translate-y-4 group-hover:translate-y-0 duration-300 delay-200"
                                 >
-                                    Request Access
+                                    View API
                                 </button>
                             </div>
                         </div>

@@ -38,18 +38,23 @@ import { LogoWithHoverMenu } from './LogoWithHoverMenu';
 import { HubSelectionModal } from './HubSelectionModal';
 import { OfficeDeliveriesView } from './OfficeDeliveriesView';
 import { OrgSettingsView } from './OrgSettingsView';
+import { SupportHubView } from './SupportHubView';
 import { PostalCodeLabel } from '../types';
 
-import { Order } from '../types';
+import { Order, ViewState } from '../types';
 
 interface AdminViewProps {
   configs: CustomerConfig[];
   orders: Order[];
   onUpdateConfig: (config: CustomerConfig) => void;
-  onSwitchToCustomerView?: (customerName?: string) => void;
+  onSwitchToCustomerView?: (customerName?: string, initialView?: ViewState, restricted?: boolean) => void;
   postalCodeLabel: PostalCodeLabel;
   onUpdatePostalCodeLabel: (label: PostalCodeLabel) => void;
 }
+
+// ... (STAT_DATA and CustomTooltip remain same)
+
+
 
 const STAT_DATA = [
   { name: 'Mon', count: 420 },
@@ -77,6 +82,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
   const dragControls = useDragControls();
   const [searchTerm, setSearchTerm] = useState('');
   const [isCustomerSelectOpen, setIsCustomerSelectOpen] = useState(false);
+  const [customerSelectTargetView, setCustomerSelectTargetView] = useState<{ view: ViewState, restricted: boolean } | null>(null);
   const [isHubSelectorOpen, setIsHubSelectorOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('customers');
   const [editingCustomerId, setEditingCustomerId] = useState<string | null>(null);
@@ -407,6 +413,16 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <p className="text-slate-400 font-medium">Manage authorized drop-off locations for <span className="font-bold text-[#0097a7]">{customer.name}</span></p>
           </div>
         </div>
+        {/* View as Customer Button */}
+        {customer.hasCustomerPortal && (
+          <button
+            onClick={() => onSwitchToCustomerView?.(customer.name, 'ADDRESSES', true)}
+            className="flex items-center gap-2 px-4 py-2 bg-[#E0F2F1] text-[#005961] rounded-xl font-bold text-sm hover:bg-[#B2DFDB] transition-colors border border-[#80CBC4]"
+          >
+            <User size={18} />
+            View as Customer
+          </button>
+        )}
       </div>
 
       <AddressManagementView
@@ -444,7 +460,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             <div className="flex flex-col justify-center">
               <span className="font-semibold text-md leading-tight text-white">Pharmacy Cloud</span>
               <span className="text-sm text-gray-300 font-normal">
-                {activeTab === 'org-settings' ? 'Admin Console' : 'Deliveries Hub'}
+                {activeTab === 'org-settings' ? 'Admin Console' : activeTab === 'support-hub' ? 'Support Hub' : 'Deliveries Hub'}
               </span>
             </div>
           </div>
@@ -480,8 +496,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
               {isProfileMenuOpen && (
                 <div className="absolute top-full right-0 mt-3 w-72 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 overflow-hidden animate-in slide-in-from-top-2 fade-in duration-200 z-50">
                   <div className="px-4 py-3 border-b border-slate-50 mb-2">
-                    <p className="text-sm font-black text-slate-800">Sarah Connor</p>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">sarah.connor@alphalake.ai</p>
+                    <p className="text-sm font-black text-slate-800">Bruce Wayne</p>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">bruce@wayneenterprises.com</p>
                     <div className="flex flex-col gap-1.5 mt-2">
                       <div className="inline-flex items-center px-2 py-0.5 rounded-md bg-[#e0f7fa] border border-[#b2ebf2] text-[#006064] text-[10px] font-bold tracking-wide w-fit">
                         OFFICE USER <span className="font-medium opacity-80 ml-1">(Deliveries Hub)</span>
@@ -523,21 +539,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                     <Bell size={16} /> Notification Settings
                   </button>
 
-                  {/* Switch to Customer View - only if customer has portal access */}
-                  {configs.some(c => c.hasCustomerPortal) && (
-                    <>
-                      <div className="h-px bg-slate-100 my-1" />
-                      <button
-                        onClick={() => {
-                          setIsProfileMenuOpen(false);
-                          setIsCustomerSelectOpen(true);
-                        }}
-                        className="w-full text-left px-4 py-3 text-sm font-bold text-[#005961] hover:bg-[#d9f2f2] flex items-center gap-3 transition-colors"
-                      >
-                        <User size={16} /> Switch to Customer View
-                      </button>
-                    </>
-                  )}
+
 
                   <div className="h-px bg-slate-100 my-1" />
                   <button className="w-full text-left px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-3 transition-colors">
@@ -567,6 +569,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
           setIsHubSelectorOpen(false);
           setOrgSettingsInitialTab('general');
           setActiveTab('org-settings');
+          setEditingCustomerId(null);
+        }}
+        onOpenSupportHub={() => {
+          setIsHubSelectorOpen(false);
+          setActiveTab('support-hub');
           setEditingCustomerId(null);
         }}
       />
@@ -605,8 +612,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                   onClick={() => {
                     setIsCustomerSelectOpen(false);
                     if (onSwitchToCustomerView) {
-                      onSwitchToCustomerView(customer);
+                      onSwitchToCustomerView(customer, customerSelectTargetView?.view, customerSelectTargetView?.restricted);
                     }
+                    setCustomerSelectTargetView(null);
                   }}
                   className="w-full text-left px-4 py-2 rounded-2xl bg-slate-50 hover:bg-[#d9f2f2] border border-slate-100 hover:border-[#b8e4e4] transition-all group group"
                 >
@@ -668,9 +676,33 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
         <div className="flex-1 flex flex-col overflow-hidden">
           <div className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-10 py-5 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-4">
-              <span className="text-slate-300 text-[10px] font-black uppercase tracking-[0.2em]">Platform</span>
+              <button
+                onClick={() => {
+                  setActiveTab('dashboard');
+                  setEditingCustomerId(null);
+                  setViewingContact(null);
+                }}
+                className="text-slate-300 hover:text-[#005961] transition-colors text-[10px] font-black uppercase tracking-[0.2em]"
+              >
+                Platform
+              </button>
+
               <ChevronRight size={14} className="text-slate-200" />
-              <h1 className="text-[#005961] text-[10px] font-black uppercase tracking-[0.2em]">{activeTab}</h1>
+
+              {(editingCustomerId || viewingContact) ? (
+                <button
+                  onClick={() => {
+                    setEditingCustomerId(null);
+                    setViewingContact(null);
+                  }}
+                  className="text-slate-300 hover:text-[#005961] transition-colors text-[10px] font-black uppercase tracking-[0.2em]"
+                >
+                  {activeTab}
+                </button>
+              ) : (
+                <h1 className="text-[#005961] text-[10px] font-black uppercase tracking-[0.2em]">{activeTab}</h1>
+              )}
+
               {editingCustomerId && (
                 <>
                   <ChevronRight size={14} className="text-slate-200" />
@@ -690,7 +722,21 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
             {activeTab === 'users' ? (
               <UserManagementView />
             ) : activeTab === 'deliveries' ? (
-              <OfficeDeliveriesView orders={orders} configs={configs} />
+              <OfficeDeliveriesView
+                orders={orders}
+                configs={configs}
+                onViewAsCustomer={(customerId) => {
+                  if (customerId) {
+                    const customer = configs.find(c => c.id === customerId);
+                    if (customer && onSwitchToCustomerView) {
+                      onSwitchToCustomerView(customer.name, 'HOME', true);
+                    }
+                  } else {
+                    setCustomerSelectTargetView({ view: 'HOME', restricted: true });
+                    setIsCustomerSelectOpen(true);
+                  }
+                }}
+              />
             ) : viewingContact ? (
               renderAddressManagement(viewingContact)
             ) : editingCustomerId && activeCustomer ? (
@@ -711,6 +757,8 @@ export const AdminView: React.FC<AdminViewProps> = ({ configs, orders, onUpdateC
                 initialTab={orgSettingsInitialTab}
                 viewMode="HUB"
               />
+            ) : activeTab === 'support-hub' ? (
+              <SupportHubView />
             ) : (
               renderDashboard()
             )}

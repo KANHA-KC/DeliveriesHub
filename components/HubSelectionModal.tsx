@@ -1,6 +1,6 @@
 
 import React from "react";
-import { X, Building2, Package, Settings, RefreshCw, CreditCard, FileText } from "lucide-react";
+import { X, Building2, Package, Settings, RefreshCw, CreditCard, FileText, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 import { CARA_LOGO_URL } from "../constants";
 
@@ -8,9 +8,10 @@ interface HubSelectionModalProps {
     isOpen: boolean;
     onClose: () => void;
     onOpenOrgSettings: () => void;
+    onOpenSupportHub: () => void;
 }
 
-export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, onClose, onOpenOrgSettings }) => {
+export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, onClose, onOpenOrgSettings, onOpenSupportHub }) => {
     if (!isOpen) return null;
 
     return (
@@ -36,7 +37,7 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                     </div>
 
                     <div className="z-10 relative">
-                        <p className="text-[#A5F3FC]/60 text-xs">© 2024 Cara Allcare Pharmacy</p>
+                        <p className="text-[#A5F3FC]/60 text-xs">© 2026 Alphalake Ai</p>
                     </div>
 
                     {/* Decorative Glows */}
@@ -46,7 +47,7 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                 </div>
 
                 {/* Right Side: Options Grid */}
-                <div className="md:w-2/3 w-full p-12 bg-[#F9FAFB] flex flex-col relative">
+                <div className="md:w-2/3 w-full p-8 bg-[#F9FAFB] flex flex-col relative">
                     <button
                         onClick={onClose}
                         className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-all border border-transparent hover:border-gray-200"
@@ -54,48 +55,65 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                         <X size={24} />
                     </button>
 
-                    <div className="flex flex-col justify-center h-full gap-6">
+                    <div className="flex flex-col justify-center h-full gap-4">
 
                         {/* Top Grid: Hubs */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {/* Hub Option Card 1 */}
                             <div
                                 onClick={() => window.location.href = 'https://app.alphalake.ai/pharmacy/inpatient-hub'}
-                                className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[220px] flex flex-col justify-between"
+                                className="cursor-pointer bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[160px] flex flex-col justify-between"
                             >
                                 <div>
-                                    <div className="w-14 h-14 bg-[#E0F2F1] rounded-2xl flex items-center justify-center text-[#003B46] mb-6 group-hover:scale-110 transition-transform duration-300">
-                                        <RefreshCw size={24} />
+                                    <div className="w-10 h-10 bg-[#E0F2F1] rounded-xl flex items-center justify-center text-[#003B46] mb-4 group-hover:scale-110 transition-transform duration-300">
+                                        <RefreshCw size={20} />
                                     </div>
-                                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#003B46]">Inpatient Hub</h3>
-                                    <p className="text-sm text-gray-500 mt-2 leading-relaxed">Manage patient prescriptions and dispensing workflows.</p>
+                                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#003B46]">Inpatient Hub</h3>
+                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">Manage patient prescriptions and dispensing workflows.</p>
                                 </div>
                             </div>
 
                             {/* Hub Option Card 2: Invoice Hub */}
                             <div
-                                className="cursor-not-allowed bg-slate-50 p-6 rounded-2xl shadow-none border border-gray-100 h-full min-h-[220px] flex flex-col justify-between opacity-70"
+                                className="cursor-not-allowed bg-slate-50 p-5 rounded-2xl shadow-none border border-gray-100 h-full min-h-[160px] flex flex-col justify-between opacity-70"
                             >
                                 <div>
-                                    <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 mb-6">
-                                        <FileText size={24} />
+                                    <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 mb-4">
+                                        <FileText size={20} />
                                     </div>
-                                    <h3 className="font-bold text-xl text-slate-400">Invoice Hub</h3>
-                                    <p className="text-sm text-slate-400 mt-2 leading-relaxed">Manage billing, invoices, and payments.</p>
+                                    <h3 className="font-bold text-lg text-slate-400">Invoice Hub</h3>
+                                    <p className="text-xs text-slate-400 mt-1 leading-relaxed">Manage billing, invoices, and payments.</p>
                                 </div>
                             </div>
 
                             {/* Hub Option Card 3: Deliveries Hub */}
                             <div
                                 onClick={onClose}
-                                className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[220px] flex flex-col justify-between"
+                                className="cursor-pointer bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[160px] flex flex-col justify-between"
                             >
                                 <div>
-                                    <div className="w-14 h-14 bg-[#E0F2F1] rounded-2xl flex items-center justify-center text-[#003B46] mb-6 group-hover:scale-110 transition-transform duration-300">
-                                        <Package size={24} />
+                                    <div className="w-10 h-10 bg-[#E0F2F1] rounded-xl flex items-center justify-center text-[#003B46] mb-4 group-hover:scale-110 transition-transform duration-300">
+                                        <Package size={20} />
                                     </div>
-                                    <h3 className="font-bold text-xl text-gray-900 group-hover:text-[#003B46]">Deliveries Hub</h3>
-                                    <p className="text-sm text-gray-500 mt-2 leading-relaxed">Track deliveries and logistics.</p>
+                                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#003B46]">Deliveries Hub</h3>
+                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">Track deliveries and logistics.</p>
+                                </div>
+                            </div>
+
+                            {/* Hub Option Card 4: Support Hub */}
+                            <div
+                                onClick={() => {
+                                    onClose();
+                                    onOpenSupportHub();
+                                }}
+                                className="cursor-pointer bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 hover:-translate-y-1 transition-all group h-full min-h-[160px] flex flex-col justify-between"
+                            >
+                                <div>
+                                    <div className="w-10 h-10 bg-[#E0F2F1] rounded-xl flex items-center justify-center text-[#003B46] mb-4 group-hover:scale-110 transition-transform duration-300">
+                                        <Headphones size={20} />
+                                    </div>
+                                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#003B46]">Support Hub</h3>
+                                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">View and submit support tickets.</p>
                                 </div>
                             </div>
                         </div>
@@ -106,14 +124,14 @@ export const HubSelectionModal: React.FC<HubSelectionModalProps> = ({ isOpen, on
                                 onClose();
                                 onOpenOrgSettings();
                             }}
-                            className="cursor-pointer bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 transition-all group flex items-start gap-6"
+                            className="cursor-pointer bg-white p-4 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:border-[#003B46]/30 transition-all group flex items-start gap-4"
                         >
-                            <div className="w-12 h-12 bg-[#F3F4F6] rounded-xl flex items-center justify-center text-gray-600 shrink-0 group-hover:bg-[#E0F2F1] group-hover:text-[#003B46] transition-colors">
-                                <Settings size={22} />
+                            <div className="w-10 h-10 bg-[#F3F4F6] rounded-xl flex items-center justify-center text-gray-600 shrink-0 group-hover:bg-[#E0F2F1] group-hover:text-[#003B46] transition-colors">
+                                <Settings size={20} />
                             </div>
-                            <div className="pt-1">
-                                <h3 className="font-bold text-lg text-gray-900 group-hover:text-[#003B46]">Organisation Admin Console</h3>
-                                <p className="text-sm text-gray-500 mt-1">Manage users, settings, and organisation-wide configurations.</p>
+                            <div className="pt-0.5">
+                                <h3 className="font-bold text-base text-gray-900 group-hover:text-[#003B46]">Organisation Admin Console</h3>
+                                <p className="text-xs text-gray-500 mt-0.5">Manage users, settings, and organisation-wide configurations.</p>
                             </div>
                         </div>
 
