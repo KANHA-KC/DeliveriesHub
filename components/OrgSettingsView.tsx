@@ -401,6 +401,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
     const filterCategories = [
         {
             title: "Tags",
+            fullWidth: true,
             options: [
                 "Patient Med Records / PMR", "Electronic Meds Admin Records / eMAR", "Elect. Patient Records / EPR",
                 "Finance", "Accounts", "Invoicing", "Payments", "Electronic Health Records / EHR",
@@ -424,7 +425,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
             options: ["Rest API", "SOAP", "Browser Control", "PC Control"]
         },
         {
-            title: "Sovereignty",
+            title: "HQ / Sovereignty",
             options: ["UK", "USA", "IRE", "FR", "DE", "IN"],
             isCountry: true
         },
@@ -455,6 +456,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+    const [tagsModalOpen, setTagsModalOpen] = useState(false);
 
     // State for Addresses moved from AdminView
     const [enabledAddressSystems, setEnabledAddressSystems] = useState<string[]>(['MCLERNONS', 'SAGE']);
@@ -653,39 +655,71 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
                     {/* Expandable Filter Panel */}
                     {isFiltersOpen && (
                         <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 animate-in slide-in-from-top-2 duration-200 max-h-[400px] overflow-y-auto custom-scrollbar">
-                            <div className="space-y-6">
-                                {filterCategories.map((category, idx) => (
-                                    <div key={idx}>
-                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">{category.title}</h4>
-                                        <div className="flex flex-wrap gap-2">
-                                            {category.options.map((option) => {
-                                                const getCountryFlag = (code: string) => {
-                                                    const flags: { [key: string]: string } = {
-                                                        'UK': '🇬🇧', 'USA': '🇺🇸', 'US': '🇺🇸', 'IRE': '🇮🇪', 'FR': '🇫🇷',
-                                                        'DE': '🇩🇪', 'IN': '🇮🇳', 'EU': '🇪🇺', 'CAN': '🇨🇦', 'AUS': '🇦🇺'
+                            <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
+                                {filterCategories.map((category, idx) => {
+                                    const isTags = category.title === "Tags";
+                                    // Limit to 24 tags (approx 3 rows) if it's the Tags category
+                                    const limit = isTags ? 24 : category.options.length;
+                                    const itemsToShow = category.options.slice(0, limit);
+                                    const hasMore = category.options.length > limit;
+
+                                    let colSpanClass = "md:col-span-3"; // Default half width
+                                    if ((category as any).fullWidth) {
+                                        colSpanClass = "md:col-span-6";
+                                    } else if (["HQ / Sovereignty", "Hosting", "Markets"].includes(category.title)) {
+                                        colSpanClass = "md:col-span-2"; // 1/3 width
+                                    }
+
+                                    return (
+                                        <div key={idx} className={colSpanClass}>
+                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">{category.title}</h4>
+                                            <div className="flex flex-wrap gap-2">
+                                                {itemsToShow.map((option) => {
+                                                    const getCountryFlag = (code: string) => {
+                                                        const flags: { [key: string]: string } = {
+                                                            'UK': '🇬🇧', 'USA': '🇺🇸', 'US': '🇺🇸', 'IRE': '🇮🇪', 'FR': '🇫🇷',
+                                                            'DE': '🇩🇪', 'IN': '🇮🇳', 'EU': '🇪🇺', 'CAN': '🇨🇦', 'AUS': '🇦🇺'
+                                                        };
+                                                        return flags[code] || code;
                                                     };
-                                                    return flags[code] || code;
-                                                };
 
-                                                const isCountry = (category as any).isCountry;
+                                                    const getFullCountryName = (code: string) => {
+                                                        const names: { [key: string]: string } = {
+                                                            'UK': 'United Kingdom', 'USA': 'United States', 'US': 'United States',
+                                                            'IRE': 'Ireland', 'FR': 'France', 'DE': 'Germany', 'IN': 'India',
+                                                            'EU': 'European Union', 'CAN': 'Canada', 'AUS': 'Australia'
+                                                        };
+                                                        return names[code] || code;
+                                                    };
 
-                                                return (
+                                                    const isCountry = (category as any).isCountry;
+
+                                                    return (
+                                                        <button
+                                                            key={option}
+                                                            onClick={() => toggleFilter(option)}
+                                                            title={isCountry ? getFullCountryName(option) : undefined}
+                                                            className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all ${selectedFilters.includes(option)
+                                                                ? 'bg-[#0097a7] border-[#0097a7] text-white shadow-sm'
+                                                                : 'bg-white border-slate-200 text-slate-600 hover:border-[#0097a7] hover:text-[#0097a7]'
+                                                                }`}
+                                                        >
+                                                            {isCountry ? <span className="text-lg leading-none">{getCountryFlag(option)}</span> : option}
+                                                        </button>
+                                                    );
+                                                })}
+                                                {isTags && hasMore && (
                                                     <button
-                                                        key={option}
-                                                        onClick={() => toggleFilter(option)}
-                                                        title={isCountry ? option : undefined}
-                                                        className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all ${selectedFilters.includes(option)
-                                                            ? 'bg-[#0097a7] border-[#0097a7] text-white shadow-sm'
-                                                            : 'bg-white border-slate-200 text-slate-600 hover:border-[#0097a7] hover:text-[#0097a7]'
-                                                            }`}
+                                                        onClick={() => setTagsModalOpen(true)}
+                                                        className="px-3 py-1.5 rounded-full text-[11px] font-bold border bg-slate-50 border-slate-200 text-[#0097a7] hover:bg-white hover:border-[#0097a7] transition-all flex items-center gap-1"
                                                     >
-                                                        {isCountry ? <span className="text-lg leading-none">{getCountryFlag(option)}</span> : option}
+                                                        <Plus size={12} /> More
                                                     </button>
-                                                );
-                                            })}
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
@@ -1083,6 +1117,53 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
         </div>
     );
 
+    const renderTagsModal = () => {
+        if (!tagsModalOpen) return null;
+        const tagsCategory = filterCategories.find(c => c.title === "Tags");
+        if (!tagsCategory) return null;
+
+        return (
+            <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[110] flex items-center justify-center p-4 animate-in fade-in duration-200">
+                <div className="bg-white rounded-3xl w-full max-w-4xl shadow-2xl border border-slate-100 p-8 relative animate-in zoom-in-95 duration-200 max-h-[80vh] flex flex-col">
+                    <button
+                        onClick={() => setTagsModalOpen(false)}
+                        className="absolute top-4 right-4 p-2 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-600 rounded-full transition-all z-50 shadow-sm border border-slate-100"
+                    >
+                        <X size={20} />
+                    </button>
+                    <h3 className="text-xl font-black text-slate-800 tracking-tight mb-2">All Tags</h3>
+                    <p className="text-sm font-medium text-slate-400 mb-6">Filter integrations by specific tags</p>
+
+                    <div className="overflow-y-auto custom-scrollbar flex-1 pr-2">
+                        <div className="flex flex-wrap gap-2">
+                            {tagsCategory.options.map((option) => (
+                                <button
+                                    key={option}
+                                    onClick={() => toggleFilter(option)}
+                                    className={`px-3 py-1.5 rounded-full text-[11px] font-bold border transition-all ${selectedFilters.includes(option)
+                                        ? 'bg-[#0097a7] border-[#0097a7] text-white shadow-sm'
+                                        : 'bg-white border-slate-200 text-slate-600 hover:border-[#0097a7] hover:text-[#0097a7]'
+                                        }`}
+                                >
+                                    {option}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="mt-6 pt-4 border-t border-slate-100 flex justify-end">
+                        <button
+                            onClick={() => setTagsModalOpen(false)}
+                            className="bg-[#005961] text-white px-6 py-2.5 rounded-xl font-bold shadow-lg hover:bg-[#004a50] transition-all"
+                        >
+                            Done
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className="max-w-6xl w-full mx-auto animate-in slide-in-from-bottom-4 duration-500 pb-20">
             <div className="mb-6 flex items-center justify-between">
@@ -1139,6 +1220,7 @@ export const OrgSettingsView: React.FC<OrgSettingsViewProps> = ({
             {activeTab === 'notifications' && renderNotifications()}
             {renderRequestModal()}
             {renderDetailModal()}
+            {renderTagsModal()}
         </div>
     );
 };
